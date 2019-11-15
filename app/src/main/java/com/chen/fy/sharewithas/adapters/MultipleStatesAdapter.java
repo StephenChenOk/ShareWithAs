@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.beans.ShareInfo;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context context;
+    private Context mContext;
     private List<ShareInfo> mDatas;
 
     private final int ONE_ITEM = 1;
@@ -26,7 +27,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private final int THREE_ITEM = 3;
 
     public MultipleStatesAdapter(Context context, ArrayList<ShareInfo> shareInfos) {
-        this.context = context;
+        this.mContext = context;
         mDatas = shareInfos;
     }
 
@@ -70,21 +71,21 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         ShareInfo shareInfo = mDatas.get(i);
         if (viewHolder instanceof TextHolder) {
-            ((TextHolder) viewHolder).headIcon.setImageBitmap(shareInfo.getHeadIcon());
+            Glide.with(mContext).load(shareInfo.getHeadIcon()).into(((TextHolder) viewHolder).headIcon);
             ((TextHolder) viewHolder).name.setText(shareInfo.getName());
             ((TextHolder) viewHolder).content.setText(shareInfo.getContent());
         } else if (viewHolder instanceof OnePictureHolder) {
-            ((OnePictureHolder) viewHolder).headIcon.setImageBitmap(shareInfo.getHeadIcon());
+            Glide.with(mContext).load(shareInfo.getHeadIcon()).into(((OnePictureHolder) viewHolder).headIcon);
             ((OnePictureHolder) viewHolder).name.setText(shareInfo.getName());
             ((OnePictureHolder) viewHolder).content.setText(shareInfo.getContent());
-            ((OnePictureHolder) viewHolder).picture.setImageBitmap(shareInfo.getPicture1());
+            Glide.with(mContext).load(shareInfo.getPicture1()).into(((OnePictureHolder) viewHolder).picture);
         } else if (viewHolder instanceof MultiplePictureHolder) {
-            ((MultiplePictureHolder) viewHolder).headIcon.setImageBitmap(shareInfo.getHeadIcon());
+            Glide.with(mContext).load(shareInfo.getHeadIcon()).into(((MultiplePictureHolder) viewHolder).headIcon);
             ((MultiplePictureHolder) viewHolder).name.setText(shareInfo.getName());
             ((MultiplePictureHolder) viewHolder).content.setText(shareInfo.getContent());
-            ((MultiplePictureHolder) viewHolder).picture1.setImageBitmap(shareInfo.getPicture1());
-            ((MultiplePictureHolder) viewHolder).picture2.setImageBitmap(shareInfo.getPicture2());
-            ((MultiplePictureHolder) viewHolder).picture3.setImageBitmap(shareInfo.getPicture3());
+            Glide.with(mContext).load(shareInfo.getPicture1()).into(((MultiplePictureHolder) viewHolder).picture1);
+            Glide.with(mContext).load(shareInfo.getPicture2()).into(((MultiplePictureHolder) viewHolder).picture2);
+            Glide.with(mContext).load(shareInfo.getPicture3()).into(((MultiplePictureHolder) viewHolder).picture3);
         }
     }
 

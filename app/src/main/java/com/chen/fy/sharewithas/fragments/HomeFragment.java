@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.adapters.MultipleStatesAdapter;
 import com.chen.fy.sharewithas.adapters.MyViewPagerAdapter;
@@ -131,10 +132,13 @@ public class HomeFragment extends Fragment implements ViewPager.OnPageChangeList
             //添加图片
             ImageView imageView = new ImageView(getContext());
             imageView.setBackgroundResource(imagesId[i]);
+            if (getActivity() != null) {
+                Glide.with(getActivity()).load(imagesId[i]).into(imageView);
+            }
             images.add(imageView);
             //添加点
             ImageView point = new ImageView(getContext());
-            point.setBackgroundResource(R.drawable.point_selctor);
+            Glide.with(getActivity()).load(R.drawable.point_selctor).into(point);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(25, 25); //自定义一个布局
             if (i == 0) {
                 point.setEnabled(true);
