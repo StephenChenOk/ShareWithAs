@@ -28,6 +28,8 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'org.litepal.android:core:2.0.0'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.lxj:xpopup:1.8.8'
+    implementation 'com.jph.takephoto:takephoto_library:4.0.3'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
