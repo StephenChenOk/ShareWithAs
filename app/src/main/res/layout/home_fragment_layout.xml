@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#eee"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
@@ -65,20 +64,25 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/search_home"
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/search_bg_selector"
-                android:clickable="true"
-                android:drawableLeft="@drawable/ic_search_24dp"
-                android:gravity="center_vertical"
-                android:text="搜索"
-                android:textSize="19sp" />
+                android:layout_height="wrap_content"
+                android:background="#eee"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/search_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="33dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/search_bg_selector"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/ic_search_24dp"
+                    android:gravity="center_vertical"
+                    android:text="搜索"
+                    android:textSize="18sp" />
+            </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_home"

@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp">
+    android:layout_marginLeft="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginRight="8dp">
 
     <include
+        android:id="@+id/head_icon_item_box"
         layout="@layout/head_icon_item_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <RelativeLayout
+        android:id="@+id/content_item_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginLeft="15dp"
-        android:orientation="vertical">
+        android:layout_toRightOf="@+id/head_icon_item_box">
 
         <include
             android:id="@+id/content_box_item"
@@ -27,8 +31,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/content_box_item"
-            android:layout_marginTop="15dp" />
+            android:layout_marginTop="10dp" />
 
     </RelativeLayout>
 
-</LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/content_item_box"
+        android:background="#eee"
+        android:padding="5dp" />
+
+</RelativeLayout>

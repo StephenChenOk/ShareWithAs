@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp">
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="8dp">
 
     <include
+        android:id="@+id/head_icon_item_layout_box"
         layout="@layout/head_icon_item_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <RelativeLayout
+        android:id="@+id/content_item_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@+id/head_icon_item_layout_box"
         android:orientation="vertical">
 
         <include
@@ -32,7 +37,7 @@
                 android:id="@+id/iv_picture1_more_pictures_item"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:src="@drawable/img11" />
 
@@ -40,7 +45,7 @@
                 android:id="@+id/iv_picture2_more_pictures_item"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:src="@drawable/img11" />
 
@@ -48,7 +53,7 @@
                 android:id="@+id/iv_picture3_more_pictures_item"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:src="@drawable/img11" />
 
@@ -59,8 +64,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/img_box_more_pictures_item"
-            android:layout_marginTop="15dp" />
+            android:layout_marginTop="10dp" />
 
     </RelativeLayout>
 
-</LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/content_item_box"
+        android:background="#eee"
+        android:padding="5dp" />
+
+</RelativeLayout>

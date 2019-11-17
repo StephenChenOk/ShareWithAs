@@ -16,7 +16,7 @@
         android:id="@+id/tv_content_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:text="测试发货覅断了开发环境里卡或管理卡还是两个符合卡机恢复国家按空格恢复数据库"
         android:textColor="#000"
         android:textSize="16sp" />
