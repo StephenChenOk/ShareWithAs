@@ -49,9 +49,9 @@ import java.util.Random;
 public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
     private Activity mActivity;
-    
-    private static ViewPager viewPager;
-    private LinearLayout pointBox;
+
+    private static ViewPager mViewPager;
+    private LinearLayout mPointBox;
     private TextView tvTitle;
     private TextView tvSearch;
     private ImageView ivTakePhotoLogo;
@@ -59,25 +59,25 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     /**
      * 拍照控件
      */
-    private TakePhoto takePhoto;
-    private InvokeParam invokeParam;
+    private TakePhoto mTakePhoto;
+    private InvokeParam mInvokeParam;
 
     /**
      * 图片剪切以及图片地址
      */
-    private CropOptions cropOptions;
-    private Uri uri;
+    private CropOptions mCropOptions;
+    private Uri mUri;
 
 
-    private RecyclerView recyclerView;
+    private RecyclerView mRecyclerView;
 
-    private ArrayList<ShareInfo> shareInfos;
+    private ArrayList<ShareInfo> mShareInfos;
 
     //图片集合
-    public static ArrayList<ImageView> images;
+    public static ArrayList<ImageView> mImages;
 
     //图片id
-    private int[] imagesId = {
+    private int[] mImagesId = {
             R.drawable.img1,
             R.drawable.img2,
             R.drawable.img6,
@@ -85,7 +85,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             R.drawable.img5
     };
     //图片标题
-    public static String[] imagesTitle = {
+    public static String[] mImagesTitle = {
             "img1",
             "img2",
             "img3",
@@ -94,9 +94,9 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     };
 
     //上一个被选中图片的位置
-    private int prePosition = 0;
+    private int mPrePosition = 0;
     //判断当前页面是否是滑动状态,解决当页面手动滑动后不能继续进行自动滑动
-    private boolean isScroll = false;
+    private boolean mIsScroll = false;
 
     /**
      * 让图片自己动起来,采用异步handel,因为在Thread中不可以进行UI操作,所有可以用handel实行异步UI操作
@@ -105,8 +105,8 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            int item = viewPager.getCurrentItem() + 1;
-            viewPager.setCurrentItem(item);
+            int item = mViewPager.getCurrentItem() + 1;
+            mViewPager.setCurrentItem(item);
 
             //延迟发消息
             handler.sendEmptyMessageDelayed(0, 3000);
@@ -144,51 +144,46 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(getActivity()!=null) {
+        if (getActivity() != null) {
             mActivity = getActivity();
-        }else{
+        } else {
             return;
         }
-        initData();
-        //1 设置顶部的自动轮转图
-        viewPager.setAdapter(new MyViewPagerAdapter(getContext()));
-        viewPager.addOnPageChangeListener(this);
-        //设置当前页面在中间位置,保证可以实现左右滑动的效果
-        viewPager.setCurrentItem(250);           //要保证是实际图片数量的整数倍,也就是保证每次进入都是先显示的第一张图片
-        tvTitle.setText(imagesTitle[prePosition]);
-        //第一次进入时延迟发消息
-        handler.sendEmptyMessageDelayed(0, 3000);
-
+        initViewPager();
+        initDataList();
+        initTakePhoto();
     }
 
     private void initView(@NonNull View view) {
         //寻找控件
-        viewPager = view.findViewById(R.id.viewpager_home);
+        mViewPager = view.findViewById(R.id.viewpager_home);
         tvTitle = view.findViewById(R.id.title_viewpager_home);
-        pointBox = view.findViewById(R.id.point_box_home);
+        mPointBox = view.findViewById(R.id.point_box_home);
         tvSearch = view.findViewById(R.id.search_home);
-        recyclerView = view.findViewById(R.id.rv_home);
+        mRecyclerView = view.findViewById(R.id.rv_home);
         ivTakePhotoLogo = view.findViewById(R.id.take_photo_logo_home);
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);//1 表示列数
-        recyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setLayoutManager(layoutManager);
 
         //设置点击事件
         tvSearch.setOnClickListener(this);
         ivTakePhotoLogo.setOnClickListener(this);
     }
 
-    private void initData() {
-        //1 获取轮播图的图片和点
-        images = new ArrayList<>();
-        for (int i = 0; i < imagesId.length; i++) {
+    private void initViewPager() {
+        //1 设置顶部的自动轮转图
+        mViewPager.setAdapter(new MyViewPagerAdapter(getContext()));
+        //2 获取轮播图的图片和点
+        mImages = new ArrayList<>();
+        for (int i = 0; i < mImagesId.length; i++) {
             //添加图片
             ImageView imageView = new ImageView(getContext());
-            imageView.setBackgroundResource(imagesId[i]);
+            imageView.setBackgroundResource(mImagesId[i]);
             if (mActivity != null) {
-                Glide.with(mActivity).load(imagesId[i]).into(imageView);
+                Glide.with(mActivity).load(mImagesId[i]).into(imageView);
             }
-            images.add(imageView);
+            mImages.add(imageView);
             //添加点
             ImageView point = new ImageView(getContext());
             Glide.with(mActivity).load(R.drawable.point_selctor).into(point);
@@ -200,35 +195,47 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 params.leftMargin = 40;    //距离左边的间距
             }
             point.setLayoutParams(params);   //设置格式,间距等
-            pointBox.addView(point);
+            mPointBox.addView(point);
         }
 
-        if (shareInfos == null) {
-            shareInfos = new ArrayList<>();
+        //3 设置当前页面在中间位置,保证可以实现左右滑动的效果
+        mViewPager.setCurrentItem(250);           //要保证是实际图片数量的整数倍,也就是保证每次进入都是先显示的第一张图片
+        tvTitle.setText(mImagesTitle[mPrePosition]);
+        //4 设置状态改变监听
+        mViewPager.addOnPageChangeListener(this);
+
+        //5 第一次进入时延迟发消息
+        handler.sendEmptyMessageDelayed(0, 3000);
+
+    }
+
+    private void initDataList() {
+        if (mShareInfos == null) {
+            mShareInfos = new ArrayList<>();
         }
-        if (!shareInfos.isEmpty()) {
-            shareInfos.clear();
+        if (!mShareInfos.isEmpty()) {
+            mShareInfos.clear();
         }
 
         Random random = new Random();
-        for(int i=0;i<3;i++){
+        for (int i = 0; i < 3; i++) {
             getDataList(random.nextInt(3));
         }
 
-        MultipleStatesAdapter adapter = new MultipleStatesAdapter(mActivity, shareInfos);
-        recyclerView.setAdapter(adapter);
+        MultipleStatesAdapter adapter = new MultipleStatesAdapter(mActivity, mShareInfos);
+        mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
     private void getDataList(int n) {
-        switch (n){
+        switch (n) {
             case 0:
                 ShareInfo shareInfo1 = new ShareInfo();
                 shareInfo1.setType(1);
                 shareInfo1.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
                 shareInfo1.setName("一一");
                 shareInfo1.setContent("第一个布局");
-                shareInfos.add(shareInfo1);
+                mShareInfos.add(shareInfo1);
                 break;
             case 1:
                 ShareInfo shareInfo2 = new ShareInfo();
@@ -237,7 +244,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 shareInfo2.setName("二二");
                 shareInfo2.setContent("第二个布局第二个布局第二个布局第二个布局第二个布局");
                 shareInfo2.setPicture1(BitmapFactory.decodeResource(getResources(), R.drawable.img1));
-                shareInfos.add(shareInfo2);
+                mShareInfos.add(shareInfo2);
                 break;
             case 2:
                 ShareInfo shareInfo3 = new ShareInfo();
@@ -248,7 +255,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 shareInfo3.setPicture1(BitmapFactory.decodeResource(getResources(), R.drawable.img2));
                 shareInfo3.setPicture2(BitmapFactory.decodeResource(getResources(), R.drawable.img3));
                 shareInfo3.setPicture3(BitmapFactory.decodeResource(getResources(), R.drawable.img4));
-                shareInfos.add(shareInfo3);
+                mShareInfos.add(shareInfo3);
                 break;
         }
     }
@@ -273,12 +280,12 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     @Override
     public void onPageSelected(int i) {
         //设置位置
-        tvTitle.setText(imagesTitle[i % images.size()]);
+        tvTitle.setText(mImagesTitle[i % mImages.size()]);
         //把上一个高亮位置设置为灰色
-        pointBox.getChildAt(prePosition).setEnabled(false);
+        mPointBox.getChildAt(mPrePosition).setEnabled(false);
         //当前位置设置为高亮
-        pointBox.getChildAt(i % images.size()).setEnabled(true);
-        prePosition = i % images.size();
+        mPointBox.getChildAt(i % mImages.size()).setEnabled(true);
+        mPrePosition = i % mImages.size();
     }
 
     /**
@@ -293,11 +300,11 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     public void onPageScrollStateChanged(int i) {
         //判断当前页面是否是滑动状态,解决当页面手动滑动后不能继续进行自动滑动
         if (i == ViewPager.SCROLL_STATE_DRAGGING) {   //拖拽状态
-            isScroll = true;
+            mIsScroll = true;
         } else if (i == ViewPager.SCROLL_STATE_SETTLING) {  //滑动状态
 
         } else if (i == ViewPager.SCROLL_STATE_IDLE) {   //静止状态
-            isScroll = false;
+            mIsScroll = false;
             handler.removeCallbacksAndMessages(null);   //清除消息
             handler.sendEmptyMessageDelayed(0, 3000);
         }
@@ -308,17 +315,17 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
      */
     private void initTakePhoto() {
         //获得对象
-        takePhoto = getTakePhoto();
+        mTakePhoto = getTakePhoto();
 
         //获取外部存储位置的uri
         File file = new File(mActivity.getExternalFilesDir(null), mImageName);
-        uri = Uri.fromFile(file);
-        mImagePath = uri.getPath();
+        mUri = Uri.fromFile(file);
+        mImagePath = mUri.getPath();
         mFileLength = file.length();
 
         //进行图片剪切
         int size = Math.min(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
-        cropOptions = new CropOptions.Builder().setOutputX(size).setOutputX(size).setWithOwnCrop(false).create();  //true表示使用TakePhoto自带的裁剪工具
+        mCropOptions = new CropOptions.Builder().setOutputX(size).setOutputX(size).setWithOwnCrop(false).create();  //true表示使用TakePhoto自带的裁剪工具
 
         //进行图片压缩
         CompressConfig compressConfig = new CompressConfig.Builder().
@@ -330,21 +337,21 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
          * @param showCompressDialog 压缩时是否显示进度对话框
          * @return
          */
-        takePhoto.onEnableCompress(compressConfig, true);
+        mTakePhoto.onEnableCompress(compressConfig, true);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //以下代码为处理Android6.0、7.0动态权限所需(TakePhoto所需)
         PermissionManager.TPermissionType type = PermissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionManager.handlePermissionsResult((Activity) mActivity, type, invokeParam, this);
+        PermissionManager.handlePermissionsResult((Activity) mActivity, type, mInvokeParam, this);
     }
 
     @Override
     public PermissionManager.TPermissionType invoke(InvokeParam invokeParam) {
         PermissionManager.TPermissionType type = PermissionManager.checkPermission(TContextWrap.of(this), invokeParam.getMethod());
         if (PermissionManager.TPermissionType.WAIT.equals(type)) {
-            this.invokeParam = invokeParam;
+            this.mInvokeParam = invokeParam;
         }
         return type;
     }
@@ -356,9 +363,10 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     public void takeSuccess(TResult result) {
         //将拍摄的照片显示出来
         try {
-            Bitmap bitmap = BitmapFactory.decodeStream(mActivity.getContentResolver().openInputStream(uri));
+            Bitmap bitmap = BitmapFactory.decodeStream(mActivity.getContentResolver().openInputStream(mUri));
             Intent intent = new Intent(mActivity, PublishActivity.class);
-            intent.putExtra("bitmap",bitmap);
+
+           // intent.putExtra("bitmap", bitmap);
             startActivity(intent);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -371,11 +379,18 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             case R.id.take_photo_logo_home:
                 new XPopup.Builder(getContext())
 //                        .maxWidth(600)
-                        .asCenterList("",new String[]{"拍照", "从相册选择"},
+                        .asCenterList("", new String[]{"拍照", "从相册选择"},
                                 new OnSelectListener() {
                                     @Override
                                     public void onSelect(int position, String text) {
-                                        toast("click " + text);
+                                        switch (position) {
+                                            case 0:         //拍照
+                                                mTakePhoto.onPickFromCaptureWithCrop(mUri, mCropOptions);
+                                                break;
+                                            case 1:         //相册
+                                                mTakePhoto.onPickFromGalleryWithCrop(mUri, mCropOptions);
+                                                break;
+                                        }
                                     }
                                 })
                         .show();

@@ -27,12 +27,13 @@
             android:textSize="18sp" />
 
         <Button
-            android:id="@+id/btn_login"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
+            android:id="@+id/btn_publish"
+            android:layout_width="67dp"
+            android:layout_height="33dp"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:background="@drawable/btn_publish"
-            android:text="登入"
+            android:text="发表"
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
 
@@ -40,8 +41,10 @@
 
     <TextView
         android:id="@+id/tv_content_publish"
-        android:padding="5dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="13dp"
         android:hint="写下这时刻的想法"
+        android:textSize="17sp"
         android:layout_width="match_parent"
         android:layout_height="150dp" />
 

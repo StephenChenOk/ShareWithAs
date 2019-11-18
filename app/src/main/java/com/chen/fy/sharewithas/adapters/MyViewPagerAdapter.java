@@ -19,6 +19,7 @@ public class MyViewPagerAdapter extends PagerAdapter {
     public MyViewPagerAdapter(Context context) {
         mContext = context;
     }
+
     /**
      * @return 图片总数
      */
@@ -29,6 +30,7 @@ public class MyViewPagerAdapter extends PagerAdapter {
 
     /**
      * 比较两个页面是否为同一个
+     *
      * @param view 当前页面
      * @param o    instantiateItem方法返回的页面
      */
@@ -39,6 +41,7 @@ public class MyViewPagerAdapter extends PagerAdapter {
 
     /**
      * 初始化页面
+     *
      * @param container viewPager自身
      * @param position  当前实例化页面位置
      * @return 返回初始化好的页面
@@ -47,7 +50,7 @@ public class MyViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
 
-        ImageView imageView = HomeFragment.images.get(position % HomeFragment.images.size());
+        ImageView imageView = HomeFragment.mImages.get(position % HomeFragment.mImages.size());
 
         //设置触摸事件,当用户点击了页面时,页面不再自己往后动,应该做停留
         imageView.setOnTouchListener(new View.OnTouchListener() {
