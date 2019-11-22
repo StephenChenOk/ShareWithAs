@@ -30,7 +30,7 @@
         <ImageView
             android:id="@+id/iv_picture_one_picture_item"
             android:layout_width="140dp"
-            android:layout_height="140dp"
+            android:layout_height="120dp"
             android:layout_below="@+id/content_box_item"
             android:layout_marginTop="5dp"
             android:src="@drawable/img11" />

@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginTop="8dp">
+    android:layout_marginTop="8dp"
+    android:layout_marginRight="8dp">
 
     <include
         android:id="@+id/head_icon_item_layout_box"
@@ -27,43 +27,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:id="@+id/img_box_more_pictures_item"
+        <!--<LinearLayout-->
+        <!--android:id="@+id/img_box_more_pictures_item"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="110dp"-->
+        <!--android:layout_below="@+id/content_box_item">-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/iv_picture1_more_pictures_item"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:src="@drawable/img11" />-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/iv_picture2_more_pictures_item"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:src="@drawable/img11" />-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/iv_picture3_more_pictures_item"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:src="@drawable/img11" />-->
+
+        <!--</LinearLayout>-->
+
+        <GridView
+            android:id="@+id/gv_box_multiple_pictures"
             android:layout_width="match_parent"
-            android:layout_height="110dp"
-            android:layout_below="@+id/content_box_item">
-
-            <ImageView
-                android:id="@+id/iv_picture1_more_pictures_item"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:layout_weight="1"
-                android:src="@drawable/img11" />
-
-            <ImageView
-                android:id="@+id/iv_picture2_more_pictures_item"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:layout_weight="1"
-                android:src="@drawable/img11" />
-
-            <ImageView
-                android:id="@+id/iv_picture3_more_pictures_item"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:layout_weight="1"
-                android:src="@drawable/img11" />
-
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/content_box_item"
+            android:columnWidth="1dp"
+            android:numColumns="3" />
 
         <include
             layout="@layout/bottom_item_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/img_box_more_pictures_item"
+            android:layout_below="@+id/gv_box_multiple_pictures"
             android:layout_marginTop="10dp" />
 
     </RelativeLayout>

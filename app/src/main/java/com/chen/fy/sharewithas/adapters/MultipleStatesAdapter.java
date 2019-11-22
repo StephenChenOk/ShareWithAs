@@ -1,34 +1,45 @@
 package com.chen.fy.sharewithas.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
-import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.beans.ShareInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements AdapterView.OnItemClickListener {
 
     private Context mContext;
     private List<ShareInfo> mDatas;
+    private ArrayList<Bitmap> mPictures;
 
     private final int ONE_ITEM = 1;
     private final int TWO_ITEM = 2;
     private final int THREE_ITEM = 3;
 
-    public MultipleStatesAdapter(Context context, ArrayList<ShareInfo> shareInfos) {
+    public MultipleStatesAdapter(Context context) {
         this.mContext = context;
+    }
+
+    public void setShareDataList(ArrayList<ShareInfo> shareInfos) {
         mDatas = shareInfos;
+    }
+
+    public void setGridViewPictureList(ArrayList<Bitmap> pictureList) {
+        mPictures = pictureList;
     }
 
     /**
@@ -71,27 +82,58 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         ShareInfo shareInfo = mDatas.get(i);
         if (viewHolder instanceof TextHolder) {
-            Glide.with(mContext).load(shareInfo.getHeadIcon()).into(((TextHolder) viewHolder).headIcon);
-            ((TextHolder) viewHolder).name.setText(shareInfo.getName());
-            ((TextHolder) viewHolder).content.setText(shareInfo.getContent());
+            setTextItemView((TextHolder) viewHolder, shareInfo);
         } else if (viewHolder instanceof OnePictureHolder) {
-            Glide.with(mContext).load(shareInfo.getHeadIcon()).into(((OnePictureHolder) viewHolder).headIcon);
-            ((OnePictureHolder) viewHolder).name.setText(shareInfo.getName());
-            ((OnePictureHolder) viewHolder).content.setText(shareInfo.getContent());
-            Glide.with(mContext).load(shareInfo.getPicture1()).into(((OnePictureHolder) viewHolder).picture);
+            setOnePictureItemView((OnePictureHolder) viewHolder, shareInfo);
         } else if (viewHolder instanceof MultiplePictureHolder) {
-            Glide.with(mContext).load(shareInfo.getHeadIcon()).into(((MultiplePictureHolder) viewHolder).headIcon);
-            ((MultiplePictureHolder) viewHolder).name.setText(shareInfo.getName());
-            ((MultiplePictureHolder) viewHolder).content.setText(shareInfo.getContent());
-            Glide.with(mContext).load(shareInfo.getPicture1()).into(((MultiplePictureHolder) viewHolder).picture1);
-            Glide.with(mContext).load(shareInfo.getPicture2()).into(((MultiplePictureHolder) viewHolder).picture2);
-            Glide.with(mContext).load(shareInfo.getPicture3()).into(((MultiplePictureHolder) viewHolder).picture3);
+            setMultiplePicturesItemView((MultiplePictureHolder) viewHolder, shareInfo);
         }
     }
+
+    /**
+     * 纯文字子布局
+     */
+    private void setTextItemView(@NonNull TextHolder viewHolder, ShareInfo shareInfo) {
+        Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.headIcon);
+        viewHolder.name.setText(shareInfo.getName());
+        viewHolder.content.setText(shareInfo.getContent());
+    }
+
+    /**
+     * 单图片子布局
+     */
+    private void setOnePictureItemView(@NonNull OnePictureHolder viewHolder, ShareInfo shareInfo) {
+        Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.headIcon);
+        viewHolder.name.setText(shareInfo.getName());
+        viewHolder.content.setText(shareInfo.getContent());
+        Glide.with(mContext).load(shareInfo.getPicture1()).into(viewHolder.picture);
+    }
+
+    /**
+     * 多图片子布局
+     */
+    private void setMultiplePicturesItemView(@NonNull MultiplePictureHolder viewHolder, ShareInfo shareInfo) {
+        Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.headIcon);
+        viewHolder.name.setText(shareInfo.getName());
+        viewHolder.content.setText(shareInfo.getContent());
+        PicturesGridViewAdapter adapter = new PicturesGridViewAdapter(mContext);
+        adapter.setPictures(mPictures);
+        viewHolder.pictures.setAdapter(adapter);
+        viewHolder.pictures.setOnItemClickListener(this);
+//            Glide.with(mContext).load(shareInfo.getPicture1()).into(((MultiplePictureHolder) viewHolder).picture1);
+//            Glide.with(mContext).load(shareInfo.getPicture2()).into(((MultiplePictureHolder) viewHolder).picture2);
+//            Glide.with(mContext).load(shareInfo.getPicture3()).into(((MultiplePictureHolder) viewHolder).picture3);
+    }
+
 
     @Override
     public int getItemCount() {
         return mDatas.size();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //Toast.makeText(mContext, position, Toast.LENGTH_SHORT).show();
     }
 
     class TextHolder extends RecyclerView.ViewHolder {
@@ -131,9 +173,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         private ImageView headIcon;
         private TextView name;
         private TextView content;
-        private ImageView picture1;
-        private ImageView picture2;
-        private ImageView picture3;
+        private GridView pictures;
 
         MultiplePictureHolder(@NonNull View itemView) {
             super(itemView);
@@ -141,9 +181,10 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             headIcon = itemView.findViewById(R.id.head_icon_item);
             name = itemView.findViewById(R.id.tv_name_item);
             content = itemView.findViewById(R.id.tv_content_item);
-            picture1 = itemView.findViewById(R.id.iv_picture1_more_pictures_item);
-            picture2 = itemView.findViewById(R.id.iv_picture2_more_pictures_item);
-            picture3 = itemView.findViewById(R.id.iv_picture3_more_pictures_item);
+            pictures = itemView.findViewById(R.id.gv_box_multiple_pictures);
+//            picture1 = itemView.findViewById(R.id.iv_picture1_more_pictures_item);
+//            picture2 = itemView.findViewById(R.id.iv_picture2_more_pictures_item);
+//            picture3 = itemView.findViewById(R.id.iv_picture3_more_pictures_item);
         }
     }
 }

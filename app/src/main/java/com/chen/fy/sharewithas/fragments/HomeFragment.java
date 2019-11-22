@@ -72,6 +72,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     private RecyclerView mRecyclerView;
 
     private ArrayList<ShareInfo> mShareInfos;
+    private ArrayList<Bitmap> mPictures;
 
     //图片集合
     public static ArrayList<ImageView> mImages;
@@ -216,13 +217,27 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         if (!mShareInfos.isEmpty()) {
             mShareInfos.clear();
         }
+        if (mPictures == null) {
+            mPictures = new ArrayList<>();
+        }
+        if (!mPictures.isEmpty()) {
+            mPictures.clear();
+        }
 
         Random random = new Random();
         for (int i = 0; i < 3; i++) {
             getDataList(random.nextInt(3));
         }
 
-        MultipleStatesAdapter adapter = new MultipleStatesAdapter(mActivity, mShareInfos);
+        for (int i = 0; i < 6; i++) {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img4);
+            mPictures.add(bitmap);
+        }
+
+
+        MultipleStatesAdapter adapter = new MultipleStatesAdapter(mActivity);
+        adapter.setShareDataList(mShareInfos);
+        adapter.setGridViewPictureList(mPictures);
         mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
@@ -366,7 +381,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             Bitmap bitmap = BitmapFactory.decodeStream(mActivity.getContentResolver().openInputStream(mUri));
             Intent intent = new Intent(mActivity, PublishActivity.class);
 
-           // intent.putExtra("bitmap", bitmap);
+            // intent.putExtra("bitmap", bitmap);
             startActivity(intent);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
