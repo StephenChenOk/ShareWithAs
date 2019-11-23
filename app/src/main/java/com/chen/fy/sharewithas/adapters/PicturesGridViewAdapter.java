@@ -2,15 +2,15 @@ package com.chen.fy.sharewithas.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
+import com.chen.fy.sharewithas.activities.MainActivity;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ public class PicturesGridViewAdapter extends BaseAdapter {
         mContext = context;
     }
 
-    public void setPictures(ArrayList<Bitmap> list) {
+    void setPictures(ArrayList<Bitmap> list) {
         mPictures = list;
     }
 
@@ -34,17 +34,16 @@ public class PicturesGridViewAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return mPictures.get(position);
+        return null;
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return 0;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("chenyisheng", "getView。。。。");
         final View view;
         ViewHolder viewHolder;
         if (convertView == null) {      //判断缓冲池是否已经有view ,若有则可以直接用,不需要再继续反射
@@ -57,7 +56,13 @@ public class PicturesGridViewAdapter extends BaseAdapter {
             view = convertView;
             viewHolder = (ViewHolder) view.getTag();
         }
-        viewHolder.ivPicture.setImageBitmap(mPictures.get(position));
+        if (getCount() == 4 || getCount() == 2) {
+            ViewGroup.LayoutParams params = viewHolder.ivPicture.getLayoutParams();
+            params.width = MainActivity.width / 2 - MainActivity.width / 11;
+            params.height = MainActivity.width / 2 - MainActivity.width / 11 - MainActivity.width / 9;
+            viewHolder.ivPicture.setLayoutParams(params);
+        }
+        Glide.with(mContext).load(mPictures.get(position)).into(viewHolder.ivPicture);
 
         return view;
     }

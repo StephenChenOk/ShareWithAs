@@ -4,12 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +28,6 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private Context mContext;
     private List<ShareInfo> mDatas;
     private ArrayList<Bitmap> mPictures;
-
     private final int ONE_ITEM = 1;
     private final int TWO_ITEM = 2;
     private final int THREE_ITEM = 3;

@@ -6,7 +6,7 @@
     <ImageView
         android:id="@+id/gv_iv_picture"
         android:src="@drawable/img1"
-        android:layout_width="105dp"
-        android:layout_height="85dp" />
+        android:layout_width="110dp"
+        android:layout_height="80dp" />
 
 </RelativeLayout>

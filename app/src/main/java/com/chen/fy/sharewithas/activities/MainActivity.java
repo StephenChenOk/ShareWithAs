@@ -5,7 +5,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -20,15 +23,34 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private FoundFragment foundFragment;
     private MineFragment mineFragment;
 
+    public static int width = 0;
+    public static int height = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_main);
         //将状态栏字体变为黑色
         //UiUtils.changeStatusBarTextImgColor(this, true);
+        initView();
 
-        setContentView(R.layout.activity_main);
+        getWH();
+    }
 
+    /**
+     * 获取屏幕宽高
+     */
+    private void getWH() {
+        //context的方法，获取windowManager
+        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        //获取屏幕对象
+        Display defaultDisplay = windowManager.getDefaultDisplay();
+        //获取屏幕的宽、高
+        width = defaultDisplay.getWidth();
+        height = defaultDisplay.getHeight();
+    }
+
+    private void initView() {
         //找到控件对象
         RadioGroup radioGroup = findViewById(R.id.rg_box_main);
 
@@ -42,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 commitAllowingStateLoss();
 
         radioGroup.setOnCheckedChangeListener(this);
-
     }
 
     @Override

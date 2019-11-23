@@ -1,17 +1,16 @@
 package com.chen.fy.sharewithas.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +29,6 @@ import com.chen.fy.sharewithas.adapters.MultipleStatesAdapter;
 import com.chen.fy.sharewithas.adapters.MyViewPagerAdapter;
 import com.chen.fy.sharewithas.beans.ShareInfo;
 import com.jph.takephoto.app.TakePhoto;
-import com.jph.takephoto.app.TakePhotoActivity;
 import com.jph.takephoto.app.TakePhotoFragment;
 import com.jph.takephoto.compress.CompressConfig;
 import com.jph.takephoto.model.CropOptions;
@@ -42,7 +40,6 @@ import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -53,8 +50,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     private static ViewPager mViewPager;
     private LinearLayout mPointBox;
     private TextView tvTitle;
-    private TextView tvSearch;
-    private ImageView ivTakePhotoLogo;
 
     /**
      * 拍照控件
@@ -102,7 +97,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     /**
      * 让图片自己动起来,采用异步handel,因为在Thread中不可以进行UI操作,所有可以用handel实行异步UI操作
      */
-    public static Handler handler = new Handler() {
+    public static Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -113,18 +108,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             handler.sendEmptyMessageDelayed(0, 3000);
         }
     };
-    /**
-     * 图片文件名
-     */
-    private final String mImageName = "sharePhoto.jpg";
-    /**
-     * 图片地址
-     */
-    private String mImagePath;
-    /**
-     * 图片文件大小
-     */
-    private long mFileLength;
 
     @Nullable
     @Override
@@ -160,9 +143,9 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         mViewPager = view.findViewById(R.id.viewpager_home);
         tvTitle = view.findViewById(R.id.title_viewpager_home);
         mPointBox = view.findViewById(R.id.point_box_home);
-        tvSearch = view.findViewById(R.id.search_home);
+        TextView tvSearch = view.findViewById(R.id.search_home);
         mRecyclerView = view.findViewById(R.id.rv_home);
-        ivTakePhotoLogo = view.findViewById(R.id.take_photo_logo_home);
+        ImageView ivTakePhotoLogo = view.findViewById(R.id.take_photo_logo_home);
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);//1 表示列数
         mRecyclerView.setLayoutManager(layoutManager);
@@ -225,15 +208,14 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         }
 
         Random random = new Random();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             getDataList(random.nextInt(3));
         }
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 7; i++) {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img4);
             mPictures.add(bitmap);
         }
-
 
         MultipleStatesAdapter adapter = new MultipleStatesAdapter(mActivity);
         adapter.setShareDataList(mShareInfos);
@@ -248,16 +230,16 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 ShareInfo shareInfo1 = new ShareInfo();
                 shareInfo1.setType(1);
                 shareInfo1.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
-                shareInfo1.setName("一一");
-                shareInfo1.setContent("第一个布局");
+                shareInfo1.setName("文字");
+                shareInfo1.setContent("文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局");
                 mShareInfos.add(shareInfo1);
                 break;
             case 1:
                 ShareInfo shareInfo2 = new ShareInfo();
                 shareInfo2.setType(2);
                 shareInfo2.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
-                shareInfo2.setName("二二");
-                shareInfo2.setContent("第二个布局第二个布局第二个布局第二个布局第二个布局");
+                shareInfo2.setName("单图片");
+                shareInfo2.setContent("单图片布局，单图片布局，单图片布局，单图片布局，单图片布局，单图片布局，单图片布局");
                 shareInfo2.setPicture1(BitmapFactory.decodeResource(getResources(), R.drawable.img1));
                 mShareInfos.add(shareInfo2);
                 break;
@@ -265,11 +247,8 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 ShareInfo shareInfo3 = new ShareInfo();
                 shareInfo3.setType(3);
                 shareInfo3.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
-                shareInfo3.setName("三三");
-                shareInfo3.setContent("第三个布局第三个布局第三个布局第三个布局第三个布局第三个布局第三个布局第三个布局第三个布局第三个布局第三个布局");
-                shareInfo3.setPicture1(BitmapFactory.decodeResource(getResources(), R.drawable.img2));
-                shareInfo3.setPicture2(BitmapFactory.decodeResource(getResources(), R.drawable.img3));
-                shareInfo3.setPicture3(BitmapFactory.decodeResource(getResources(), R.drawable.img4));
+                shareInfo3.setName("多图片");
+                shareInfo3.setContent("多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局");
                 mShareInfos.add(shareInfo3);
                 break;
         }
@@ -331,12 +310,10 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     private void initTakePhoto() {
         //获得对象
         mTakePhoto = getTakePhoto();
-
-        //获取外部存储位置的uri
+        //图片文件名
+        String mImageName = "sharePhoto.jpg";
         File file = new File(mActivity.getExternalFilesDir(null), mImageName);
         mUri = Uri.fromFile(file);
-        mImagePath = mUri.getPath();
-        mFileLength = file.length();
 
         //进行图片剪切
         int size = Math.min(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
@@ -359,7 +336,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //以下代码为处理Android6.0、7.0动态权限所需(TakePhoto所需)
         PermissionManager.TPermissionType type = PermissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionManager.handlePermissionsResult((Activity) mActivity, type, mInvokeParam, this);
+        PermissionManager.handlePermissionsResult(mActivity, type, mInvokeParam, this);
     }
 
     @Override
@@ -376,16 +353,8 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
      */
     @Override
     public void takeSuccess(TResult result) {
-        //将拍摄的照片显示出来
-        try {
-            Bitmap bitmap = BitmapFactory.decodeStream(mActivity.getContentResolver().openInputStream(mUri));
-            Intent intent = new Intent(mActivity, PublishActivity.class);
-
-            // intent.putExtra("bitmap", bitmap);
-            startActivity(intent);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(mActivity, PublishActivity.class);
+        startActivity(intent);
     }
 
     @Override
