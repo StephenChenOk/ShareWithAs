@@ -2,6 +2,9 @@ package com.chen.fy.sharewithas.beans;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 分享的信息类
  */
@@ -11,9 +14,7 @@ public class ShareInfo {
     private Bitmap headIcon;
     private String name;
     private String content;
-    private Bitmap picture1;
-    private Bitmap picture2;
-    private Bitmap picture3;
+    private ArrayList<Bitmap> photos;
 
     public int getType() {
         return type;
@@ -47,27 +48,11 @@ public class ShareInfo {
         this.content = content;
     }
 
-    public Bitmap getPicture1() {
-        return picture1;
+    public ArrayList<Bitmap> getPhotos() {
+        return photos;
     }
 
-    public void setPicture1(Bitmap picture1) {
-        this.picture1 = picture1;
-    }
-
-    public Bitmap getPicture2() {
-        return picture2;
-    }
-
-    public void setPicture2(Bitmap picture2) {
-        this.picture2 = picture2;
-    }
-
-    public Bitmap getPicture3() {
-        return picture3;
-    }
-
-    public void setPicture3(Bitmap picture3) {
-        this.picture3 = picture3;
+    public void setPhotos(ArrayList<Bitmap> photos) {
+        this.photos = photos;
     }
 }

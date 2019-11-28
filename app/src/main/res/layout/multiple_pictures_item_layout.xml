@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="5dp"
     android:layout_marginTop="7dp"
@@ -14,7 +15,7 @@
 
     <RelativeLayout
         android:id="@+id/content_item_box"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="7dp"
         android:layout_marginLeft="7dp"
@@ -27,50 +28,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <!--<LinearLayout-->
-        <!--android:id="@+id/img_box_more_pictures_item"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="110dp"-->
-        <!--android:layout_below="@+id/content_box_item">-->
-
-        <!--<ImageView-->
-        <!--android:id="@+id/iv_picture1_more_pictures_item"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_marginTop="5dp"-->
-        <!--android:layout_weight="1"-->
-        <!--android:src="@drawable/img11" />-->
-
-        <!--<ImageView-->
-        <!--android:id="@+id/iv_picture2_more_pictures_item"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_marginTop="5dp"-->
-        <!--android:layout_weight="1"-->
-        <!--android:src="@drawable/img11" />-->
-
-        <!--<ImageView-->
-        <!--android:id="@+id/iv_picture3_more_pictures_item"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_marginTop="5dp"-->
-        <!--android:layout_weight="1"-->
-        <!--android:src="@drawable/img11" />-->
-
-        <!--</LinearLayout>-->
-
-        <com.chen.fy.sharewithas.views.WrapContentGridView
-            android:id="@+id/gv_box_multiple_pictures"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:id="@+id/box_gv_pictures"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/content_box_item"
-            android:columnWidth="0dp" />
+            android:layout_marginTop="2dp"
+            android:layout_below="@+id/content_box_item">
+
+            <com.chen.fy.sharewithas.views.WrapContentGridView
+                android:id="@+id/gv_box_multiple_pictures"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:horizontalSpacing="2dp"
+                android:verticalSpacing="2dp" />
+        </RelativeLayout>
 
         <include
             layout="@layout/bottom_item_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/gv_box_multiple_pictures"
+            android:layout_below="@+id/box_gv_pictures"
             android:layout_marginTop="10dp" />
 
     </RelativeLayout>

@@ -1,7 +1,8 @@
 package com.chen.fy.sharewithas.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.icu.util.LocaleData;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,20 +11,21 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
+import com.chen.fy.sharewithas.activities.MainActivity;
 
 import java.util.ArrayList;
 
-public class PicturesGridViewAdapter extends BaseAdapter {
+public class PublishGridViewAdapter extends BaseAdapter {
 
     private Context mContext;
-    private ArrayList<Bitmap> mPictures;
+    private ArrayList<String> mUriList;
 
-    PicturesGridViewAdapter(Context context) {
+    public PublishGridViewAdapter(Context context) {
         mContext = context;
     }
 
-    void setPictures(ArrayList<Bitmap> list) {
-        mPictures = list;
+    public void setUris(ArrayList<String> list) {
+        mUriList = list;
     }
 
     /**
@@ -31,7 +33,7 @@ public class PicturesGridViewAdapter extends BaseAdapter {
      */
     @Override
     public int getCount() {
-        return (mPictures == null) ? 0 : mPictures.size();
+        return (mUriList == null) ? 0 : mUriList.size();
     }
 
     /**
@@ -41,11 +43,11 @@ public class PicturesGridViewAdapter extends BaseAdapter {
      */
     @Override
     public Object getItem(int position) {
-        return mPictures.get(position);
+        return mUriList.get(position);
     }
 
     /**
-     * 返回的是该postion对应item的id,adapterview也有类似方法：
+     * 返回的是该position对应item的id,adapterView也有类似方法：
      * 某些方法（如onClickListener的onclick方法）有id这个参数，而这个id参数就是取决于getItemId()这个返回值的
      */
     @Override
@@ -61,7 +63,7 @@ public class PicturesGridViewAdapter extends BaseAdapter {
         final View view;
         ViewHolder viewHolder;
         if (convertView == null) {      //判断缓冲池是否已经有view ,若有则可以直接用,不需要再继续反射
-            view = LayoutInflater.from(mContext).inflate(R.layout.gv_item_layout, parent, false);
+            view = LayoutInflater.from(mContext).inflate(R.layout.gv_publish_item_layout, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.ivPicture = view.findViewById(R.id.gv_iv_picture);
 
@@ -71,24 +73,15 @@ public class PicturesGridViewAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        int width = parent.getWidth();
-        int height = parent.getWidth();
-
-        //根据图片数量动态设置图片的大小，以满足更好的视觉效果
-        ViewGroup.LayoutParams params = viewHolder.ivPicture.getLayoutParams();
-        if (getCount() == 1) {
-            params.width = (int) (width / 2.5);
-            params.height = (int) (height / 2.5);
-        } else if (getCount() == 2 || getCount() == 4) {
-            params.width = (int) (width / 2.0);
-            params.height = (int) (height / 2.0);
+//        ViewGroup.LayoutParams params = viewHolder.ivPicture.getLayoutParams();
+//        params.width = MainActivity.width / 3 - MainActivity.width / 10;
+//        params.height = MainActivity.width / 3 - MainActivity.width / 10;
+//        viewHolder.ivPicture.setLayoutParams(params);
+        if (position == mUriList.size() - 1) {
+            Glide.with(mContext).load(Integer.valueOf(mUriList.get(position))).into(viewHolder.ivPicture);
         } else {
-            params.width = (int) (width / 3);
-            params.height = (int) (height / 3);
+            Glide.with(mContext).load(mUriList.get(position)).into(viewHolder.ivPicture);
         }
-        viewHolder.ivPicture.setLayoutParams(params);
-        Glide.with(mContext).load(mPictures.get(position)).into(viewHolder.ivPicture);
-
         return view;
     }
 

@@ -5,15 +5,19 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,23 +28,28 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
+import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.activities.PublishActivity;
 import com.chen.fy.sharewithas.adapters.MultipleStatesAdapter;
 import com.chen.fy.sharewithas.adapters.MyViewPagerAdapter;
 import com.chen.fy.sharewithas.beans.ShareInfo;
-import com.jph.takephoto.app.TakePhoto;
-import com.jph.takephoto.app.TakePhotoFragment;
-import com.jph.takephoto.compress.CompressConfig;
-import com.jph.takephoto.model.CropOptions;
-import com.jph.takephoto.model.InvokeParam;
-import com.jph.takephoto.model.TContextWrap;
-import com.jph.takephoto.model.TResult;
-import com.jph.takephoto.permission.PermissionManager;
+
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 
+import org.devio.takephoto.app.TakePhoto;
+import org.devio.takephoto.app.TakePhotoFragment;
+import org.devio.takephoto.compress.CompressConfig;
+import org.devio.takephoto.model.CropOptions;
+import org.devio.takephoto.model.InvokeParam;
+import org.devio.takephoto.model.TContextWrap;
+import org.devio.takephoto.model.TResult;
+import org.devio.takephoto.permission.PermissionManager;
+
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageChangeListener, View.OnClickListener {
@@ -190,7 +199,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
         //5 第一次进入时延迟发消息
         handler.sendEmptyMessageDelayed(0, 3000);
-
     }
 
     private void initDataList() {
@@ -209,23 +217,24 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
         Random random = new Random();
         for (int i = 0; i < 5; i++) {
-            getDataList(random.nextInt(3));
+            getDataList(random);
         }
 
-        for (int i = 0; i < 7; i++) {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img4);
+        for (int i = 0; i < 9; i++) {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
             mPictures.add(bitmap);
         }
 
         MultipleStatesAdapter adapter = new MultipleStatesAdapter(mActivity);
         adapter.setShareDataList(mShareInfos);
-        adapter.setGridViewPictureList(mPictures);
         mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
-    private void getDataList(int n) {
-        switch (n) {
+    private void getDataList(Random random) {
+        Bitmap bitmap;
+        ArrayList<Bitmap> list = new ArrayList<>();
+        switch (random.nextInt(2)) {
             case 0:
                 ShareInfo shareInfo1 = new ShareInfo();
                 shareInfo1.setType(1);
@@ -238,18 +247,14 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 ShareInfo shareInfo2 = new ShareInfo();
                 shareInfo2.setType(2);
                 shareInfo2.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
-                shareInfo2.setName("单图片");
-                shareInfo2.setContent("单图片布局，单图片布局，单图片布局，单图片布局，单图片布局，单图片布局，单图片布局");
-                shareInfo2.setPicture1(BitmapFactory.decodeResource(getResources(), R.drawable.img1));
+                shareInfo2.setName("多图片");
+                shareInfo2.setContent("多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局");
+                for (int i = 0; i < random.nextInt(9); i++) {
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
+                    list.add(bitmap);
+                }
+                shareInfo2.setPhotos(list);
                 mShareInfos.add(shareInfo2);
-                break;
-            case 2:
-                ShareInfo shareInfo3 = new ShareInfo();
-                shareInfo3.setType(3);
-                shareInfo3.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
-                shareInfo3.setName("多图片");
-                shareInfo3.setContent("多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局");
-                mShareInfos.add(shareInfo3);
                 break;
         }
     }
@@ -316,18 +321,18 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         mUri = Uri.fromFile(file);
 
         //进行图片剪切
-        int size = Math.min(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
-        mCropOptions = new CropOptions.Builder().setOutputX(size).setOutputX(size).setWithOwnCrop(false).create();  //true表示使用TakePhoto自带的裁剪工具
+        int size = Math.max(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
+        mCropOptions = new CropOptions.Builder().setOutputX(size).setOutputY(size).setWithOwnCrop(false).create();  //true表示使用TakePhoto自带的裁剪工具
 
         //进行图片压缩
-        CompressConfig compressConfig = new CompressConfig.Builder().
-                //大小            像素
-                        setMaxSize(512).setMaxPixel(200).create();
+        CompressConfig compressConfig = new CompressConfig.Builder().create();
+//        //大小            像素
+//        //setMaxSize(1024).setMaxPixel(1024*1024).create();
+//
         /*
          * 启用图片压缩
          * @param config 压缩图片配置
          * @param showCompressDialog 压缩时是否显示进度对话框
-         * @return
          */
         mTakePhoto.onEnableCompress(compressConfig, true);
     }
@@ -353,7 +358,12 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
      */
     @Override
     public void takeSuccess(TResult result) {
+        super.takeSuccess(result);
         Intent intent = new Intent(mActivity, PublishActivity.class);
+        intent.putExtra("ImagesSize", result.getImages().size());
+        for (int i = 0; i < result.getImages().size(); i++) {
+            intent.putExtra("ImagesURI" + i, result.getImages().get(i).getCompressPath());
+        }
         startActivity(intent);
     }
 
@@ -370,9 +380,11 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                                         switch (position) {
                                             case 0:         //拍照
                                                 mTakePhoto.onPickFromCaptureWithCrop(mUri, mCropOptions);
+
                                                 break;
                                             case 1:         //相册
-                                                mTakePhoto.onPickFromGalleryWithCrop(mUri, mCropOptions);
+                                                //mTakePhoto.onPickFromGalleryWithCrop(mUri, mCropOptions);
+                                                mTakePhoto.onPickMultiple(9);
                                                 break;
                                         }
                                     }
@@ -381,6 +393,53 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 break;
             case R.id.search_home:
                 break;
+        }
+    }
+
+    /**
+     * 防止内存泄漏
+     * 1:定义为静态内部类
+     * 2:持有外部弱引用
+     */
+    private class GetDataTask extends AsyncTask<String, Integer, String> {
+
+        //获取外部弱引用
+        private WeakReference<MainActivity> activityWeakReference;
+
+        GetDataTask(MainActivity mainActivity) {
+            activityWeakReference = new WeakReference<>(mainActivity);
+        }
+
+        /**
+         * 后台任务开始之前调用，通常用来初始化界面操作
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        /**
+         * 执行后台耗时操作，已在子线程中执行
+         *
+         * @return 对结果进行返回
+         */
+        @Override
+        protected String doInBackground(String... params) {
+            return "";
+        }
+
+        /**
+         * 当后台任务执行完毕时调用
+         *
+         * @param result 后台执行任务的返回值
+         */
+        @Override
+        protected void onPostExecute(String result) {
+            //判断外部活动对象是否已经被销毁
+            MainActivity activity = activityWeakReference.get();
+            if (activity == null || activity.isFinishing()) {
+                return;
+            }
         }
     }
 

@@ -18,7 +18,9 @@ public class WrapContentGridView extends GridView {
 
         //设置图片格式
         int size = getAdapter().getCount();
-        if (size == 2 || size == 4) {
+        if (size == 1) {
+            setNumColumns(1);
+        } else if (size == 2 || size == 4) {
             setNumColumns(2);
         } else {
             setNumColumns(3);
