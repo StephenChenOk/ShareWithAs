@@ -2,6 +2,7 @@ package com.chen.fy.sharewithas.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +17,13 @@ import java.util.ArrayList;
 public class PicturesGridViewAdapter extends BaseAdapter {
 
     private Context mContext;
-    private ArrayList<Bitmap> mPictures;
+    private ArrayList<Object> mPictures;
 
     PicturesGridViewAdapter(Context context) {
         mContext = context;
     }
 
-    void setPictures(ArrayList<Bitmap> list) {
+    void setPictures(ArrayList<Object> list) {
         mPictures = list;
     }
 
@@ -71,20 +72,22 @@ public class PicturesGridViewAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        int width = parent.getWidth();
-        int height = parent.getWidth();
+//        int width = parent.getWidth();
+//        int height = parent.getWidth();
+//
+//        Log.d("WH:", width + "," + height);
 
         //根据图片数量动态设置图片的大小，以满足更好的视觉效果
         ViewGroup.LayoutParams params = viewHolder.ivPicture.getLayoutParams();
         if (getCount() == 1) {
-            params.width = (int) (width / 2.5);
-            params.height = (int) (height / 2.5);
+            params.width = (int) (923 / 2.5);
+            params.height = (int) (923 / 2.5);
         } else if (getCount() == 2 || getCount() == 4) {
-            params.width = (int) (width / 2.0);
-            params.height = (int) (height / 2.0);
+            params.width = (int) (635 / 2.0);
+            params.height = (int) (635 / 2.0);
         } else {
-            params.width = (int) (width / 3);
-            params.height = (int) (height / 3);
+            params.width = (int) (923 / 3);
+            params.height = (int) (923 / 3);
         }
         viewHolder.ivPicture.setLayoutParams(params);
         Glide.with(mContext).load(mPictures.get(position)).into(viewHolder.ivPicture);

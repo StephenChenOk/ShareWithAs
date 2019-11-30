@@ -1,6 +1,6 @@
 package com.chen.fy.sharewithas.fragments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,7 +17,6 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +33,7 @@ import com.chen.fy.sharewithas.adapters.MultipleStatesAdapter;
 import com.chen.fy.sharewithas.adapters.MyViewPagerAdapter;
 import com.chen.fy.sharewithas.beans.ShareInfo;
 
+import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 
@@ -49,12 +49,11 @@ import org.devio.takephoto.permission.PermissionManager;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
-    private Activity mActivity;
+    private Context mContext;
 
     private static ViewPager mViewPager;
     private LinearLayout mPointBox;
@@ -77,6 +76,8 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
     private ArrayList<ShareInfo> mShareInfos;
     private ArrayList<Bitmap> mPictures;
+
+    private ArrayList<Object> mObjects;
 
     //图片集合
     public static ArrayList<ImageView> mImages;
@@ -118,6 +119,11 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         }
     };
 
+    /**
+     * 动态图片点击接口
+     */
+    private MyOnPicturesItemClickListener itemClickListener = new MyOnPicturesItemClickListener(mContext);
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -137,8 +143,8 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (getActivity() != null) {
-            mActivity = getActivity();
+        if (getContext() != null) {
+            mContext = getContext();
         } else {
             return;
         }
@@ -173,13 +179,13 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             //添加图片
             ImageView imageView = new ImageView(getContext());
             imageView.setBackgroundResource(mImagesId[i]);
-            if (mActivity != null) {
-                Glide.with(mActivity).load(mImagesId[i]).into(imageView);
+            if (mContext != null) {
+                Glide.with(mContext).load(mImagesId[i]).into(imageView);
             }
             mImages.add(imageView);
             //添加点
             ImageView point = new ImageView(getContext());
-            Glide.with(mActivity).load(R.drawable.point_selctor).into(point);
+            Glide.with(mContext).load(R.drawable.point_selctor).into(point);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(25, 25); //自定义一个布局
             if (i == 0) {
                 point.setEnabled(true);
@@ -208,32 +214,24 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         if (!mShareInfos.isEmpty()) {
             mShareInfos.clear();
         }
-        if (mPictures == null) {
-            mPictures = new ArrayList<>();
-        }
-        if (!mPictures.isEmpty()) {
-            mPictures.clear();
-        }
 
         Random random = new Random();
         for (int i = 0; i < 5; i++) {
             getDataList(random);
         }
 
-        for (int i = 0; i < 9; i++) {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
-            mPictures.add(bitmap);
-        }
+        itemClickListener.setList(mObjects);
 
-        MultipleStatesAdapter adapter = new MultipleStatesAdapter(mActivity);
+        MultipleStatesAdapter adapter = new MultipleStatesAdapter(mContext);
         adapter.setShareDataList(mShareInfos);
+        adapter.setItemClickListener(itemClickListener);
         mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
     private void getDataList(Random random) {
         Bitmap bitmap;
-        ArrayList<Bitmap> list = new ArrayList<>();
+        ArrayList<Object> list = new ArrayList<>();
         switch (random.nextInt(2)) {
             case 0:
                 ShareInfo shareInfo1 = new ShareInfo();
@@ -250,7 +248,11 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 shareInfo2.setName("多图片");
                 shareInfo2.setContent("多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局");
                 for (int i = 0; i < random.nextInt(9); i++) {
-                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
+                    if(i%2==0) {
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
+                    }else{
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img11);
+                    }
                     list.add(bitmap);
                 }
                 shareInfo2.setPhotos(list);
@@ -317,7 +319,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         mTakePhoto = getTakePhoto();
         //图片文件名
         String mImageName = "sharePhoto.jpg";
-        File file = new File(mActivity.getExternalFilesDir(null), mImageName);
+        File file = new File(mContext.getExternalFilesDir(null), mImageName);
         mUri = Uri.fromFile(file);
 
         //进行图片剪切
@@ -341,7 +343,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //以下代码为处理Android6.0、7.0动态权限所需(TakePhoto所需)
         PermissionManager.TPermissionType type = PermissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionManager.handlePermissionsResult(mActivity, type, mInvokeParam, this);
+        PermissionManager.handlePermissionsResult(getActivity(), type, mInvokeParam, this);
     }
 
     @Override
@@ -359,7 +361,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     @Override
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);
-        Intent intent = new Intent(mActivity, PublishActivity.class);
+        Intent intent = new Intent(mContext, PublishActivity.class);
         intent.putExtra("ImagesSize", result.getImages().size());
         for (int i = 0; i < result.getImages().size(); i++) {
             intent.putExtra("ImagesURI" + i, result.getImages().get(i).getCompressPath());
@@ -444,6 +446,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     }
 
     private void toast(String text) {
-        Toast.makeText(mActivity, text, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
     }
 }

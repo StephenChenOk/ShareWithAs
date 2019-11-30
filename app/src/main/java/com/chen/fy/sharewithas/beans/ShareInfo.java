@@ -14,7 +14,7 @@ public class ShareInfo {
     private Bitmap headIcon;
     private String name;
     private String content;
-    private ArrayList<Bitmap> photos;
+    private ArrayList<Object> photos;
 
     public int getType() {
         return type;
@@ -48,11 +48,11 @@ public class ShareInfo {
         this.content = content;
     }
 
-    public ArrayList<Bitmap> getPhotos() {
+    public ArrayList<Object> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(ArrayList<Bitmap> photos) {
+    public void setPhotos(ArrayList<Object> photos) {
         this.photos = photos;
     }
 }

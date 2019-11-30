@@ -1,12 +1,10 @@
 package com.chen.fy.sharewithas.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +18,21 @@ import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.interfaces.OnPicturesItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements AdapterView.OnItemClickListener {
+public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private List<ShareInfo> mDatas;
     private final int ONE_ITEM = 1;
     private final int TWO_ITEM = 2;
+    private GridView mGridView;
+
+    private OnPicturesItemClickListener mItemClickListener;
+
 
     public MultipleStatesAdapter(Context context) {
         this.mContext = context;
@@ -37,6 +40,10 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public void setShareDataList(ArrayList<ShareInfo> shareInfos) {
         mDatas = shareInfos;
+    }
+
+    public void setItemClickListener(OnPicturesItemClickListener listener) {
+        this.mItemClickListener = listener;
     }
 
     /**
@@ -93,7 +100,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     /**
      * 多图片子布局
      */
-    private void setMultiplePicturesItemView(@NonNull MultiplePictureHolder viewHolder, ShareInfo shareInfo) {
+    private void setMultiplePicturesItemView(@NonNull MultiplePictureHolder viewHolder, final ShareInfo shareInfo) {
         Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.headIcon);
         viewHolder.name.setText(shareInfo.getName());
         viewHolder.content.setText(shareInfo.getContent());
@@ -105,17 +112,21 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         PicturesGridViewAdapter adapter = new PicturesGridViewAdapter(mContext);
         adapter.setPictures(shareInfo.getPhotos());
         viewHolder.pictures.setAdapter(adapter);
-        viewHolder.pictures.setOnItemClickListener(this);
+        viewHolder.pictures.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //GridView子布局的最外层布局
+                RelativeLayout relativeLayout = (RelativeLayout) parent.getAdapter().
+                        getView(position, view, null);
+                mItemClickListener.onPicturesItemClick(relativeLayout, position, shareInfo.getPhotos());
+            }
+        });
     }
 
 
     @Override
     public int getItemCount() {
         return mDatas.size();
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     }
 
     class TextHolder extends RecyclerView.ViewHolder {
