@@ -6,6 +6,7 @@
     <ImageView
         android:id="@+id/gv_iv_picture"
         android:src="@drawable/img"
+        android:scaleType="centerCrop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.MainActivity"
+        <activity
+            android:name=".activities.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/MyTheme">
             <intent-filter>
@@ -18,7 +19,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.PublishActivity"
+        <activity
+            android:name=".activities.PublishActivity"
+            android:theme="@style/MyTheme" />
+        <activity android:name=".activities.LoginActivity"
+            android:theme="@style/MyTheme"/>
+        <activity android:name=".activities.RegisterActivity"
+            android:theme="@style/MyTheme"/>
+        <activity android:name=".activities.MyInfoActivity"
             android:theme="@style/MyTheme"/>
     </application>
 

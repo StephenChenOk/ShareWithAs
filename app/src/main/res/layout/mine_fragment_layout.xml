@@ -67,6 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/item_selector"
             android:clickable="true"
             android:orientation="horizontal"
@@ -75,7 +76,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_settings_24dp" />
+                android:src="@drawable/ic_photo_blue_24dp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -114,7 +115,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_settings_24dp" />
+                android:src="@drawable/ic_favorite_border_red_24dp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -157,7 +158,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_settings_24dp" />
+                android:src="@drawable/ic_feedback_yellow_24dp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -197,7 +198,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_settings_24dp" />
+                android:src="@drawable/ic_help_outline_blue_24dp" />
 
             <TextView
                 android:layout_width="0dp"

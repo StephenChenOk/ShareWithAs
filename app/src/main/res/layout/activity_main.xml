@@ -16,7 +16,6 @@
         android:layout_height="1dp"
         android:background="#AAAAAA" />
 
-
     <!--底部导航栏-->
     <RadioGroup
         android:id="@+id/rg_box_main"
@@ -33,7 +32,7 @@
             android:button="@null"
             android:checked="true"
             android:drawableTop="@drawable/bg_home"
-            android:gravity="center"
+            android:gravity="center|bottom"
             android:text="动态"
             android:textColor="@drawable/bottom_bar_text_color" />
 
@@ -44,7 +43,7 @@
             android:layout_weight="1"
             android:button="@null"
             android:drawableTop="@drawable/bg_found"
-            android:gravity="center"
+            android:gravity="center|bottom"
             android:text="发现"
             android:textColor="@drawable/bottom_bar_text_color" />
 
@@ -55,7 +54,7 @@
             android:layout_weight="1"
             android:button="@null"
             android:drawableTop="@drawable/bg_mine"
-            android:gravity="center"
+            android:gravity="center|bottom"
             android:text="我的"
             android:textColor="@drawable/bottom_bar_text_color" />
 

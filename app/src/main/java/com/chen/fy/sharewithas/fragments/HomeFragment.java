@@ -122,7 +122,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     /**
      * 动态图片点击接口
      */
-    private MyOnPicturesItemClickListener itemClickListener = new MyOnPicturesItemClickListener(mContext);
+    private MyOnPicturesItemClickListener itemClickListener = new MyOnPicturesItemClickListener();
 
     @Nullable
     @Override
@@ -220,8 +220,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             getDataList(random);
         }
 
-        itemClickListener.setList(mObjects);
-
         MultipleStatesAdapter adapter = new MultipleStatesAdapter(mContext);
         adapter.setShareDataList(mShareInfos);
         adapter.setItemClickListener(itemClickListener);
@@ -248,9 +246,9 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 shareInfo2.setName("多图片");
                 shareInfo2.setContent("多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局");
                 for (int i = 0; i < random.nextInt(9); i++) {
-                    if(i%2==0) {
+                    if (i % 2 == 0) {
                         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
-                    }else{
+                    } else {
                         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img11);
                     }
                     list.add(bitmap);

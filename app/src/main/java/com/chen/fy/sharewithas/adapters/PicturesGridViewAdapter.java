@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
+import com.chen.fy.sharewithas.activities.MainActivity;
 
 import java.util.ArrayList;
 
@@ -73,21 +74,26 @@ public class PicturesGridViewAdapter extends BaseAdapter {
         }
 
 //        int width = parent.getWidth();
-//        int height = parent.getWidth();
+//        int height = parent.getHeight();
 //
 //        Log.d("WH:", width + "," + height);
+//        Log.d("WH:", String.valueOf(MainActivity.width));
+//        Log.d("WH:", String.valueOf(MainActivity.height));
+
+        int whTemp = MainActivity.width;
 
         //根据图片数量动态设置图片的大小，以满足更好的视觉效果
         ViewGroup.LayoutParams params = viewHolder.ivPicture.getLayoutParams();
         if (getCount() == 1) {
-            params.width = (int) (923 / 2.5);
-            params.height = (int) (923 / 2.5);
+            params.width = (int) (whTemp / 2.7);
+            params.height = (int) (whTemp / 2.7);
         } else if (getCount() == 2 || getCount() == 4) {
-            params.width = (int) (635 / 2.0);
-            params.height = (int) (635 / 2.0);
+            whTemp = (int) (MainActivity.width / 1.7);
+            params.width = (int) (whTemp / 2);
+            params.height = (int) (whTemp / 2);
         } else {
-            params.width = (int) (923 / 3);
-            params.height = (int) (923 / 3);
+            params.width = (int) (whTemp / 3);
+            params.height = (int) (whTemp / 3);
         }
         viewHolder.ivPicture.setLayoutParams(params);
         Glide.with(mContext).load(mPictures.get(position)).into(viewHolder.ivPicture);

@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,6 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private List<ShareInfo> mDatas;
     private final int ONE_ITEM = 1;
     private final int TWO_ITEM = 2;
-    private GridView mGridView;
 
     private OnPicturesItemClickListener mItemClickListener;
 
@@ -106,7 +106,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         viewHolder.content.setText(shareInfo.getContent());
         if (shareInfo.getPhotos().size() == 2 || shareInfo.getPhotos().size() == 4) {
             ViewGroup.LayoutParams params = viewHolder.gvBox.getLayoutParams();
-            params.width = (int) (MainActivity.width / 1.7);
+            params.width = (int) (MainActivity.width / 1.9);
             viewHolder.gvBox.setLayoutParams(params);
         }
         PicturesGridViewAdapter adapter = new PicturesGridViewAdapter(mContext);
