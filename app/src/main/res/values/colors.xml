@@ -6,4 +6,5 @@
     <color name="color_text_normal">#aaaaaa</color>
     <color name="color_text_selected">#008577</color>
     <color name="item_selected">#EEEEEE</color>
+    <color name="colorDivider">#4DAAA9A9</color>
 </resources>

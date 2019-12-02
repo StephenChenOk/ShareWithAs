@@ -53,7 +53,6 @@
 
             </LinearLayout>
 
-            <!-- 图片 -->
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -104,26 +103,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-
-            <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="#eee"-->
-            <!--android:padding="10dp">-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/search_home"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="33dp"-->
-            <!--android:layout_weight="1"-->
-            <!--android:background="@drawable/search_bg_selector"-->
-            <!--android:clickable="true"-->
-            <!--android:drawableLeft="@drawable/ic_search_24dp"-->
-            <!--android:gravity="center_vertical"-->
-            <!--android:text="搜索"-->
-            <!--android:textSize="18sp" />-->
-            <!--</RelativeLayout>-->
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_home"

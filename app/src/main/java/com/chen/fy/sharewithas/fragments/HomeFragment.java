@@ -71,13 +71,9 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     private CropOptions mCropOptions;
     private Uri mUri;
 
-
     private RecyclerView mRecyclerView;
 
     private ArrayList<ShareInfo> mShareInfos;
-    private ArrayList<Bitmap> mPictures;
-
-    private ArrayList<Object> mObjects;
 
     //图片集合
     public static ArrayList<ImageView> mImages;
