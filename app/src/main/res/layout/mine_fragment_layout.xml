@@ -22,7 +22,7 @@
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:layout_marginLeft="40dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="60dp"
                 android:fitsSystemWindows="true"
                 android:src="@drawable/img" />
 
@@ -39,7 +39,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="70dp"
                     android:text="登入/注册"
-                    android:textColor="#000"
+                    android:textColor="#FFF"
                     android:textSize="19dp" />
 
                 <TextView

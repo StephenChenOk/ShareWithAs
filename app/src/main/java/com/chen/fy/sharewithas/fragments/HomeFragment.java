@@ -34,6 +34,7 @@ import com.chen.fy.sharewithas.adapters.MyViewPagerAdapter;
 import com.chen.fy.sharewithas.beans.ShareInfo;
 
 import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;
+import com.chen.fy.sharewithas.utils.UiUtils;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 
@@ -149,6 +150,23 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         initTakePhoto();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    /**
+     * Fragment在show与hide状态转换时调用此方法
+     * @param hidden 是否是hide状态
+     */
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!hidden && getActivity()!=null){
+            UiUtils.changeStatusBarTextImgColor(getActivity(), false);
+        }
+    }
     private void initView(@NonNull View view) {
         //寻找控件
         mViewPager = view.findViewById(R.id.viewpager_home);

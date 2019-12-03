@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -25,6 +26,7 @@ import com.chen.fy.sharewithas.beans.News;
 import com.chen.fy.sharewithas.beans.NewsRequest;
 import com.chen.fy.sharewithas.constants.Constants;
 import com.chen.fy.sharewithas.interfaces.OnItemClickListener;
+import com.chen.fy.sharewithas.utils.UiUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -47,8 +49,11 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
 
     private int page = 1;
 
-    private int mCurrentColIndex = 0;
+    private int mCurrentColIndex = 3;
 
+    /**
+     * 请求的数量
+     */
     private int[] mCols = new int[]{Constants.NEWS_COL5, Constants.NEWS_COL7, Constants.NEWS_COL8,
             Constants.NEWS_COL10, Constants.NEWS_COL11};
 
@@ -56,24 +61,39 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.found_fragment_layout, container, false);
+
         return mView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         initView();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         initData();
+    }
+
+    /**
+     * Fragment在show与hide状态转换时调用此方法
+     * @param hidden 是否是hide状态
+     */
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!hidden && getActivity()!=null){
+            UiUtils.changeStatusBarTextImgColor(getActivity(), true);
+        }
     }
 
     private void initView() {
         rvNewsList = mView.findViewById(R.id.rv_news);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);//1 表示列数
+        rvNewsList.setLayoutManager(layoutManager);
     }
 
     private void initData() {

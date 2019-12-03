@@ -3,6 +3,7 @@ package com.chen.fy.sharewithas.activities;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
@@ -52,16 +53,35 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         //找到控件对象
         RadioGroup radioGroup = findViewById(R.id.rg_box_main);
 
-        //初始化fragment
-        homeFragment = new HomeFragment();
-        foundFragment = new FoundFragment();
-        mineFragment = new MineFragment();
-
         //第一次进入时显示home界面
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_main, homeFragment).
-                commitAllowingStateLoss();
+//        getSupportFragmentManager().beginTransaction().add(R.id.fragment_main, homeFragment).
+//                commitAllowingStateLoss();
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (homeFragment == null) {
+            homeFragment = new HomeFragment();
+            transaction.add(R.id.fragment_main, homeFragment);
+        }
+        hideFragment(transaction);
+        transaction.show(homeFragment).commit();
 
         radioGroup.setOnCheckedChangeListener(this);
+    }
+
+    /**
+     * 使用replace时每次都会销毁并重建Fragment，而使用show、hide则避免了此问题
+     * 隐藏所有的Fragment
+     */
+    private void hideFragment(FragmentTransaction transaction) {
+        if (homeFragment != null) {
+            transaction.hide(homeFragment);
+        }
+        if (foundFragment != null) {
+            transaction.hide(foundFragment);
+        }
+        if (mineFragment != null) {
+            transaction.hide(mineFragment);
+        }
     }
 
     @Override
@@ -73,20 +93,37 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     @Override
     public void onClick(View v) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         switch (v.getId()) {
             case R.id.rb_home_main:
-                transaction.replace(R.id.fragment_main, homeFragment);
-                transaction.commitAllowingStateLoss();
+//                transaction.replace(R.id.fragment_main, homeFragment);
+//                transaction.commitAllowingStateLoss();
+                if (homeFragment == null) {
+                    homeFragment = new HomeFragment();
+                    transaction.add(R.id.fragment_main, homeFragment);
+                }
+                hideFragment(transaction);
+                transaction.show(homeFragment).commit();
                 break;
             case R.id.rb_found_main:
-                transaction.replace(R.id.fragment_main, foundFragment);
-                transaction.commitAllowingStateLoss();
+//                transaction.replace(R.id.fragment_main, foundFragment);
+//                transaction.commitAllowingStateLoss();
+                if (foundFragment == null) {
+                    foundFragment = new FoundFragment();
+                    transaction.add(R.id.fragment_main, foundFragment);
+                }
+                hideFragment(transaction);
+                transaction.show(foundFragment).commit();
                 break;
             case R.id.rb_mine_main:
-                transaction.replace(R.id.fragment_main, mineFragment);
-                transaction.commitAllowingStateLoss();
+//                transaction.replace(R.id.fragment_main, mineFragment);
+//                transaction.commitAllowingStateLoss();
+                if (mineFragment == null) {
+                    mineFragment = new MineFragment();
+                    transaction.add(R.id.fragment_main, mineFragment);
+                }
+                hideFragment(transaction);
+                transaction.show(mineFragment).commit();
                 break;
         }
     }
