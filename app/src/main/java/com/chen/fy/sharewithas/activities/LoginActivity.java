@@ -25,13 +25,11 @@ import com.chen.fy.sharewithas.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private EditText etUsername;
     private EditText etPwd;
-    private Button btnLogin;
-    private TextView btnRegister;
 
     private boolean bPwdSwitch = false;
     private ImageView ivPwdSwitch;
@@ -49,13 +47,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void initView() {
         etUsername = findViewById(R.id.et_username);
         etPwd = findViewById(R.id.et_pwd);
-        btnLogin = findViewById(R.id.btn_login);
-        btnRegister = findViewById(R.id.btn_login_to_register);
+        Button btnLogin = findViewById(R.id.btn_login);
+        TextView btnRegister = findViewById(R.id.btn_login_to_register);
         ivPwdSwitch = findViewById(R.id.iv_pwd_switch);
+        ImageView ivReturn = findViewById(R.id.iv_return_login);
 
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
         ivPwdSwitch.setOnClickListener(this);
+        ivReturn.setOnClickListener(this);
     }
 
     /**
@@ -111,13 +111,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_login:
                 requestLogin();
                 break;
             case R.id.btn_login_to_register:
-                Intent intent2 = new Intent(this,RegisterActivity.class);
+                Intent intent2 = new Intent(this, RegisterActivity.class);
                 startActivity(intent2);
+                break;
+            case R.id.iv_return_login:
+                finish();
                 break;
             case R.id.iv_pwd_switch:
                 bPwdSwitch = !bPwdSwitch;
@@ -130,7 +133,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             InputType.TYPE_CLASS_TEXT);     //隐藏密码
                     etPwd.setTypeface(Typeface.DEFAULT);    //设置字体样式
                 }
-
                 break;
         }
     }

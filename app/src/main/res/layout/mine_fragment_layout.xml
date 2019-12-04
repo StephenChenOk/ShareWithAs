@@ -4,25 +4,25 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <RelativeLayout
         android:id="@+id/home_app_bar"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="240dp"
         android:fitsSystemWindows="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="240dp"
             android:background="#008577"
             android:fitsSystemWindows="true"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/head_icon_mine"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="60dp"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="65dp"
                 android:fitsSystemWindows="true"
                 android:src="@drawable/img" />
 
@@ -36,29 +36,30 @@
                     android:id="@+id/user_name_mine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="70dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="80dp"
                     android:text="登入/注册"
-                    android:textColor="#FFF"
-                    android:textSize="19dp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="20dp" />
 
                 <TextView
                     android:id="@+id/info_text_mine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:text=""
-                    android:textSize="15sp" />
+                    android:layout_marginTop="10dp"
+                    android:textColor="#EEEEEE"
+                    android:text="我们的故事从拥有一个账号开始"
+                    android:textSize="14sp" />
 
             </LinearLayout>
         </LinearLayout>
-    </com.google.android.material.appbar.AppBarLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="215dp"
+        android:layout_marginTop="250dp"
         android:orientation="vertical">
 
         <!--相册-->
@@ -204,8 +205,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
-                android:gravity="center_vertical"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="帮助"
                 android:textColor="#333"
                 android:textSize="17sp" />
@@ -246,8 +247,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
-                android:gravity="center_vertical"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="设置"
                 android:textColor="#333"
                 android:textSize="17sp" />

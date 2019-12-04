@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,7 +111,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
             }
         } else {
             tvUsername.setText("登入/注册");
-            tvUserInfo.setText("");
+            tvUserInfo.setText("我们的故事从拥有一个账号开始");
         }
     }
 

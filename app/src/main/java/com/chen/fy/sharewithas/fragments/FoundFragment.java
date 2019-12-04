@@ -11,12 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.NewsDetailActivity;
@@ -27,6 +24,7 @@ import com.chen.fy.sharewithas.beans.NewsRequest;
 import com.chen.fy.sharewithas.constants.Constants;
 import com.chen.fy.sharewithas.interfaces.OnItemClickListener;
 import com.chen.fy.sharewithas.utils.UiUtils;
+import com.chen.fy.sharewithas.vassonic.SonicJavaScriptInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -40,6 +38,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class FoundFragment extends Fragment implements OnItemClickListener {
+
+    private static final int MODE_SONIC = 1;
+
+    public static final int MODE_SONIC_WITH_OFFLINE_CACHE = 2;
+
+    private String DEMO_URL;
 
     private NewsAdapter mNewsAdapter;
     private List<News> newsList;
@@ -71,21 +75,22 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
 
         initView();
     }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initData();
+
     }
 
     /**
      * Fragment在show与hide状态转换时调用此方法
+     *
      * @param hidden 是否是hide状态
      */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden && getActivity()!=null){
+        if (!hidden && getActivity() != null) {
             UiUtils.changeStatusBarTextImgColor(getActivity(), true);
         }
     }
@@ -107,6 +112,7 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
 
     /**
      * 使用AsyncTask发起请求获取新闻数据
+     *
      * @param page 请求的页面
      */
     private void refreshData(final int page) {
@@ -120,10 +126,18 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
 
     @Override
     public void onItemClick(int position) {
-        Intent intent = new Intent(getContext(), NewsDetailActivity.class);
+        startNewsDetailActivity(MODE_SONIC, position);
+    }
+
+    //跳转新闻详情界面
+    private void startNewsDetailActivity(int mode, int position) {
         News news = newsList.get(position);
-        intent.putExtra(Constants.NEWS_DETAIL_URL_KEY, news.getContentUrl());
-        startActivity(intent);
+        DEMO_URL = news.getContentUrl();
+        Intent intent = new Intent(getContext(), NewsDetailActivity.class);
+        intent.putExtra(NewsDetailActivity.PARAM_URL, DEMO_URL);
+        intent.putExtra(NewsDetailActivity.PARAM_MODE, mode);
+        intent.putExtra(SonicJavaScriptInterface.PARAM_CLICK_TIME, System.currentTimeMillis());
+        startActivityForResult(intent, -1);
     }
 }
 
@@ -171,18 +185,14 @@ class NewsListAsyncTask extends AsyncTask<Integer, Void, String> {
         Request request = new Request.Builder()
                 .url(Constants.GENERAL_NEWS_URL + urlParams)
                 .get().build();
-        Log.d("chenyisheng",Constants.GENERAL_NEWS_URL + urlParams);
         //3 开始发送同步请求,同步回阻塞当前线程直到服务器返回数据为止
         try {
             OkHttpClient client = new OkHttpClient();
             Response response = client.newCall(request).execute();
-            Log.d("chenyisheng","execute");
             if (response.isSuccessful()) {
                 String body = response.body().string();
-                Log.d("chenyisheng",body);
                 return body;
-            }else {
-                Log.d("chenyisheng","失败");
+            } else {
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -197,14 +207,12 @@ class NewsListAsyncTask extends AsyncTask<Integer, Void, String> {
      */
     @Override
     protected void onPostExecute(String s) {
-        Log.d("chenyisheng","onPostExecute");
         //对服务器返回的json文件进行解析，并将解析结果封装到一个指定的对象集合中
         Gson gson = new Gson();
         Type jsonType = new TypeToken<BaseResponse<List<News>>>() {
         }.getType();
         BaseResponse<List<News>> newsListResponse = gson.fromJson(s, jsonType);
         list.addAll(newsListResponse.getData());
-        Log.d("chenyisheng",list.toString());
         //添加新闻成功后，通知适配器更新
         mAdapter.setNewsList(list);
         mAdapter.notifyDataSetChanged();

@@ -38,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         etPwd = findViewById(R.id.et_pwd);
         etPwd2 = findViewById(R.id.et_pwd_again);
         Button btnRegister = findViewById(R.id.btn_register);
-        ImageView ivReturn = findViewById(R.id.iv_return);
+        ImageView ivReturn = findViewById(R.id.iv_return_register);
         TextView tvReturn = findViewById(R.id.tv_return);
 
         btnRegister.setOnClickListener(this);
@@ -72,7 +72,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             case R.id.btn_register:
                 requestRegister();
                 break;
-            case R.id.iv_return:
+            case R.id.iv_return_register:
                 finish();
                 break;
             case R.id.tv_return:
