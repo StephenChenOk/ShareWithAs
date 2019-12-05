@@ -1,6 +1,7 @@
 package com.chen.fy.sharewithas.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,7 @@ public class PicturesGridViewAdapter extends BaseAdapter {
      */
     @Override
     public int getCount() {
-        return (mPictures == null) ? 0 : mPictures.size();
+        return mPictures.size();
     }
 
     /**
@@ -60,6 +61,7 @@ public class PicturesGridViewAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         final View view;
         ViewHolder viewHolder;
+
         if (convertView == null) {      //判断缓冲池是否已经有view ,若有则可以直接用,不需要再继续反射
             view = LayoutInflater.from(mContext).inflate(R.layout.gv_item_layout, parent, false);
             viewHolder = new ViewHolder();

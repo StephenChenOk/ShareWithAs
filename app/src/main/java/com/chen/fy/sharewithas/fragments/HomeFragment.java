@@ -230,7 +230,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         }
 
         Random random = new Random();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             getDataList(random);
         }
 
@@ -259,7 +259,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 shareInfo2.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
                 shareInfo2.setName("多图片");
                 shareInfo2.setContent("多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局");
-                for (int i = 0; i < random.nextInt(9); i++) {
+                for (int i = 0; i < 9; i++) {
                     if (i % 2 == 0) {
                         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
                     } else {

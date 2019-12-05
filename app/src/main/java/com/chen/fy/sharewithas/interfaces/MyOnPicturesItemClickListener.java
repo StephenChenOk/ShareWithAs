@@ -1,21 +1,16 @@
 package com.chen.fy.sharewithas.interfaces;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.chen.fy.sharewithas.R;
-import com.chen.fy.sharewithas.adapters.PicturesGridViewAdapter;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.ImageViewerPopupView;
 import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener;
@@ -23,7 +18,6 @@ import com.lxj.xpopup.interfaces.XPopupImageLoader;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 分享动态中的图片点击类
