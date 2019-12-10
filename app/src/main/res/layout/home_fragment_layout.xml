@@ -8,7 +8,7 @@
     <!-- 上面部分 -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="280dp"
+        android:layout_height="285dp"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -47,7 +47,7 @@
                     android:id="@+id/point_box_home"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="3dp"
                     android:gravity="center"
                     android:orientation="horizontal" />
 

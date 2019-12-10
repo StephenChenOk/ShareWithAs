@@ -1,7 +1,5 @@
 package com.chen.fy.sharewithas.interfaces;
 
-import android.graphics.Bitmap;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;

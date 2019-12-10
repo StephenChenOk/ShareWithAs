@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.interfaces.OnMoreOptionClickListener;
 import com.chen.fy.sharewithas.interfaces.OnPicturesItemClickListener;
 
 import java.util.ArrayList;
@@ -30,8 +31,14 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private final int ONE_ITEM = 1;
     private final int TWO_ITEM = 2;
 
+    /**
+     * GridView中图片的点击事件
+     */
     private OnPicturesItemClickListener mItemClickListener;
-
+    /**
+     * 动态的更多选项点击事件
+     */
+    private OnMoreOptionClickListener mMoreOptionClickListener;
 
     public MultipleStatesAdapter(Context context) {
         this.mContext = context;
@@ -43,6 +50,10 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public void setItemClickListener(OnPicturesItemClickListener listener) {
         this.mItemClickListener = listener;
+    }
+
+    public void setMoreOptionClickListener(OnMoreOptionClickListener moreOptionClickListener) {
+        this.mMoreOptionClickListener = moreOptionClickListener;
     }
 
     /**
@@ -81,43 +92,56 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         ShareInfo shareInfo = mDatas.get(i);
         if (viewHolder instanceof TextHolder) {
-            setTextItemView((TextHolder) viewHolder, shareInfo);
+            setTextItemView((TextHolder) viewHolder, shareInfo, i);
         } else if (viewHolder instanceof MultiplePictureHolder) {
-            setMultiplePicturesItemView((MultiplePictureHolder) viewHolder, shareInfo);
+            setMultiplePicturesItemView((MultiplePictureHolder) viewHolder, shareInfo, i);
         }
     }
 
     /**
      * 纯文字子布局
      */
-    private void setTextItemView(@NonNull TextHolder viewHolder, ShareInfo shareInfo) {
-        Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.headIcon);
-        viewHolder.name.setText(shareInfo.getName());
-        viewHolder.content.setText(shareInfo.getContent());
+    private void setTextItemView(@NonNull TextHolder viewHolder, ShareInfo shareInfo, final int position) {
+        Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
+        viewHolder.tvName.setText(shareInfo.getName());
+        viewHolder.tvContent.setText(shareInfo.getContent());
+        viewHolder.rlMoreOptionBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMoreOptionClickListener.onclick(position, v);
+            }
+        });
     }
 
     /**
      * 多图片子布局
      */
-    private void setMultiplePicturesItemView(@NonNull MultiplePictureHolder viewHolder, final ShareInfo shareInfo) {
-        Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.headIcon);
-        viewHolder.name.setText(shareInfo.getName());
-        viewHolder.content.setText(shareInfo.getContent());
+    private void setMultiplePicturesItemView(@NonNull MultiplePictureHolder viewHolder, final ShareInfo shareInfo, final int position) {
+        Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
+        viewHolder.tvName.setText(shareInfo.getName());
+        viewHolder.tvContent.setText(shareInfo.getContent());
         if (shareInfo.getPhotos().size() == 2 || shareInfo.getPhotos().size() == 4) {
-            ViewGroup.LayoutParams params = viewHolder.gvBox.getLayoutParams();
+            ViewGroup.LayoutParams params = viewHolder.rlBox.getLayoutParams();
             params.width = (int) (MainActivity.width / 1.9);
-            viewHolder.gvBox.setLayoutParams(params);
+            viewHolder.rlBox.setLayoutParams(params);
         }
         PicturesGridViewAdapter adapter = new PicturesGridViewAdapter(mContext);
         adapter.setPictures(shareInfo.getPhotos());
-        viewHolder.pictures.setAdapter(adapter);
-        viewHolder.pictures.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        viewHolder.gvPictures.setAdapter(adapter);
+        viewHolder.gvPictures.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            //GridView点解啊事件
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //GridView子布局的最外层布局
                 RelativeLayout relativeLayout = (RelativeLayout) parent.getAdapter().
                         getView(position, view, null);
                 mItemClickListener.onPicturesItemClick(relativeLayout, position, shareInfo.getPhotos());
+            }
+        });
+        viewHolder.rlMoreOptionBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMoreOptionClickListener.onclick(position, v);
             }
         });
     }
@@ -130,35 +154,39 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     class TextHolder extends RecyclerView.ViewHolder {
 
-        private ImageView headIcon;
-        private TextView name;
-        private TextView content;
+        private ImageView ivHeadIcon;
+        private TextView tvName;
+        private TextView tvContent;
+        private RelativeLayout rlMoreOptionBox;
 
         TextHolder(@NonNull View itemView) {
             super(itemView);
 
-            headIcon = itemView.findViewById(R.id.head_icon_item);
-            name = itemView.findViewById(R.id.tv_name_item);
-            content = itemView.findViewById(R.id.tv_content_item);
+            ivHeadIcon = itemView.findViewById(R.id.head_icon_item);
+            tvName = itemView.findViewById(R.id.tv_name_item);
+            tvContent = itemView.findViewById(R.id.tv_content_item);
+            rlMoreOptionBox = itemView.findViewById(R.id.rl_more_option_box);
         }
     }
 
     class MultiplePictureHolder extends RecyclerView.ViewHolder {
 
-        private ImageView headIcon;
-        private TextView name;
-        private TextView content;
-        private RelativeLayout gvBox;
-        private GridView pictures;
+        private ImageView ivHeadIcon;
+        private TextView tvName;
+        private TextView tvContent;
+        private RelativeLayout rlBox;
+        private GridView gvPictures;
+        private RelativeLayout rlMoreOptionBox;
 
         MultiplePictureHolder(@NonNull View itemView) {
             super(itemView);
 
-            headIcon = itemView.findViewById(R.id.head_icon_item);
-            name = itemView.findViewById(R.id.tv_name_item);
-            content = itemView.findViewById(R.id.tv_content_item);
-            gvBox = itemView.findViewById(R.id.box_gv_pictures);
-            pictures = itemView.findViewById(R.id.gv_box_multiple_pictures);
+            ivHeadIcon = itemView.findViewById(R.id.head_icon_item);
+            tvName = itemView.findViewById(R.id.tv_name_item);
+            tvContent = itemView.findViewById(R.id.tv_content_item);
+            rlBox = itemView.findViewById(R.id.box_gv_pictures);
+            gvPictures = itemView.findViewById(R.id.gv_box_multiple_pictures);
+            rlMoreOptionBox = itemView.findViewById(R.id.rl_more_option_box);
         }
     }
 }

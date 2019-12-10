@@ -17,6 +17,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.activities.PublishActivity;
@@ -34,8 +37,11 @@ import com.chen.fy.sharewithas.adapters.MyViewPagerAdapter;
 import com.chen.fy.sharewithas.beans.ShareInfo;
 
 import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;
+import com.chen.fy.sharewithas.interfaces.OnMoreOptionClickListener;
 import com.chen.fy.sharewithas.utils.UiUtils;
+import com.chen.fy.sharewithas.views.MyAttachPopupView;
 import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.AttachPopupView;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import org.devio.takephoto.app.TakePhoto;
@@ -51,6 +57,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 
 public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
@@ -119,7 +126,12 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     /**
      * 动态图片点击接口
      */
-    private MyOnPicturesItemClickListener itemClickListener = new MyOnPicturesItemClickListener();
+    private MyOnPicturesItemClickListener onPicturesItemClickListener = new MyOnPicturesItemClickListener();
+
+    /**
+     * 动态中更多选项的点击接口
+     */
+    private MyOnMoreOptionClickListener onMoreOptionClickListener = new MyOnMoreOptionClickListener();
 
     @Nullable
     @Override
@@ -158,15 +170,17 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
     /**
      * Fragment在show与hide状态转换时调用此方法
+     *
      * @param hidden 是否是hide状态
      */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden && getActivity()!=null){
+        if (!hidden && getActivity() != null) {
             UiUtils.changeStatusBarTextImgColor(getActivity(), false);
         }
     }
+
     private void initView(@NonNull View view) {
         //寻找控件
         mViewPager = view.findViewById(R.id.viewpager_home);
@@ -199,13 +213,17 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             mImages.add(imageView);
             //添加点
             ImageView point = new ImageView(getContext());
-            Glide.with(mContext).load(R.drawable.point_selctor).into(point);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(25, 25); //自定义一个布局
+//            Glide.with(mContext)
+//                    .load(R.drawable.point_selctor)
+//                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true))
+//                    .into(point);
+            point.setBackgroundResource(R.drawable.point_selctor);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(20, 20); //自定义一个布局
             if (i == 0) {
                 point.setEnabled(true);
             } else {
                 point.setEnabled(false);
-                params.leftMargin = 40;    //距离左边的间距
+                params.leftMargin = 30;    //距离左边的间距
             }
             point.setLayoutParams(params);   //设置格式,间距等
             mPointBox.addView(point);
@@ -236,7 +254,8 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
         MultipleStatesAdapter adapter = new MultipleStatesAdapter(mContext);
         adapter.setShareDataList(mShareInfos);
-        adapter.setItemClickListener(itemClickListener);
+        adapter.setItemClickListener(onPicturesItemClickListener);
+        adapter.setMoreOptionClickListener(onMoreOptionClickListener);
         mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
@@ -259,7 +278,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                 shareInfo2.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
                 shareInfo2.setName("多图片");
                 shareInfo2.setContent("多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局");
-                for (int i = 0; i < 9; i++) {
+                for (int i = 0; i < random.nextInt(8) + 1; i++) {
                     if (i % 2 == 0) {
                         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
                     } else {
@@ -459,5 +478,22 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
     private void toast(String text) {
         Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 动态更多选项的点击事件
+     */
+    private class MyOnMoreOptionClickListener implements OnMoreOptionClickListener {
+        @Override
+        public void onclick(int position, View view) {
+            new XPopup.Builder(getContext())
+                    .offsetX(-10) //往左偏移10
+//                        .offsetY(10)  //往下偏移10
+//                        .popupPosition(PopupPosition.Right) //手动指定位置，有可能被遮盖
+                    .hasShadowBg(false) // 去掉半透明背景
+                    .atView(view)
+                    .asCustom(new MyAttachPopupView(getContext()))
+                    .show();
+        }
     }
 }

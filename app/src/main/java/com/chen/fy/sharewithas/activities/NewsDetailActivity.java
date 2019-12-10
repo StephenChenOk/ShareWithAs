@@ -73,8 +73,13 @@ public class NewsDetailActivity extends AppCompatActivity implements View.OnClic
             finish();
             return;
         }
+
+        UiUtils.changeStatusBarTextImgColor(this,true);
+
         initSonic(url, mode);
+
         setContentView(R.layout.news_detail_layout);
+
         WebView webView = initWebView(intent);
         // Sonic会话客户端绑定WebView
         if (sonicSessionClient != null) {
@@ -83,6 +88,7 @@ public class NewsDetailActivity extends AppCompatActivity implements View.OnClic
         } else { // 使用WebView内置客户端进行加载网页
             webView.loadUrl(url);
         }
+
     }
 
     /**
