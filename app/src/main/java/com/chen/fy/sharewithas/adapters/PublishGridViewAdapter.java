@@ -2,7 +2,6 @@ package com.chen.fy.sharewithas.adapters;
 
 import android.content.Context;
 import android.icu.util.LocaleData;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,21 +9,23 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
-import com.chen.fy.sharewithas.activities.MainActivity;
 
 import java.util.ArrayList;
 
 public class PublishGridViewAdapter extends BaseAdapter {
 
     private Context mContext;
-    private ArrayList<String> mUriList;
+    private ArrayList<Object> mUriList;
 
     public PublishGridViewAdapter(Context context) {
         mContext = context;
     }
 
-    public void setUris(ArrayList<String> list) {
+    public void setUris(ArrayList<Object> list) {
         mUriList = list;
     }
 
@@ -65,7 +66,7 @@ public class PublishGridViewAdapter extends BaseAdapter {
         if (convertView == null) {      //判断缓冲池是否已经有view ,若有则可以直接用,不需要再继续反射
             view = LayoutInflater.from(mContext).inflate(R.layout.gv_publish_item_layout, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.ivPicture = view.findViewById(R.id.gv_iv_picture);
+            viewHolder.ivPicture = view.findViewById(R.id.gv_publish_iv_picture);
 
             view.setTag(viewHolder);
         } else {    //若缓冲池中已经有view则可以直接用holder对象
@@ -77,10 +78,15 @@ public class PublishGridViewAdapter extends BaseAdapter {
 //        params.width = MainActivity.width / 3 - MainActivity.width / 10;
 //        params.height = MainActivity.width / 3 - MainActivity.width / 10;
 //        viewHolder.ivPicture.setLayoutParams(params);
-        if (position == mUriList.size() - 1) {
-            Glide.with(mContext).load(Integer.valueOf(mUriList.get(position))).into(viewHolder.ivPicture);
-        } else {
-            Glide.with(mContext).load(mUriList.get(position)).into(viewHolder.ivPicture);
+        if (mUriList.size() != 9 && position == mUriList.size() - 1){
+            Glide.with(mContext)
+                    .load(Integer.valueOf(String.valueOf(mUriList.get(position))))
+                    .apply(new RequestOptions().fitCenter())
+                    .into(viewHolder.ivPicture);
+        } else{
+            Glide.with(mContext)
+                    .load(mUriList.get(position))
+                    .into(viewHolder.ivPicture);
         }
         return view;
     }

@@ -1,44 +1,84 @@
 package com.chen.fy.sharewithas.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.adapters.PublishGridViewAdapter;
+import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;
+import com.chen.fy.sharewithas.utils.UiUtils;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.ImageViewerPopupView;
+import com.lxj.xpopup.interfaces.OnSelectListener;
+import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener;
 
+import org.devio.takephoto.app.TakePhoto;
+import org.devio.takephoto.app.TakePhotoActivity;
+import org.devio.takephoto.compress.CompressConfig;
+import org.devio.takephoto.model.CropOptions;
+import org.devio.takephoto.model.InvokeParam;
+import org.devio.takephoto.model.TContextWrap;
+import org.devio.takephoto.model.TResult;
+import org.devio.takephoto.permission.PermissionManager;
+
+import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 
-public class PublishActivity extends AppCompatActivity implements View.OnClickListener {
+public class PublishActivity extends TakePhotoActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
-    private TextView tvContent;
+    private EditText etContent;
     private GridView gvPictures;
+    private PublishGridViewAdapter adapter;
 
-    private ArrayList<String> mUriList;
+    private ArrayList<Object> mUriList;
+    private ArrayList<Object> mExpandList;
+
+    /**
+     * 拍照控件
+     */
+    private TakePhoto mTakePhoto;
+    private InvokeParam mInvokeParam;
+
+    /**
+     * 图片剪切以及图片地址
+     */
+    private CropOptions mCropOptions;
+    private Uri mUri;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.publish_layout);
 
+        UiUtils.changeStatusBarTextImgColor(this, true);
+
         initView();
         initData();
+        initTakePhoto();
     }
 
     private void initView() {
         ImageView ivReturn = findViewById(R.id.iv_return_publish);
         Button ivPublish = findViewById(R.id.btn_publish);
-        tvContent = findViewById(R.id.tv_content_publish);
+        etContent = findViewById(R.id.et_content_publish);
         gvPictures = findViewById(R.id.gv_box_public);
+        gvPictures.setOnItemClickListener(this);
 
         ivReturn.setOnClickListener(this);
         ivPublish.setOnClickListener(this);
@@ -51,20 +91,61 @@ public class PublishActivity extends AppCompatActivity implements View.OnClickLi
         if (!mUriList.isEmpty()) {
             mUriList.clear();
         }
+        if (mExpandList == null) {
+            mExpandList = new ArrayList<>();
+        }
+        if (!mExpandList.isEmpty()) {
+            mExpandList.clear();
+        }
         int count;
         if (getIntent() != null) {
             count = getIntent().getIntExtra("ImagesSize", 0);
             for (int i = 0; i < count; i++) {
                 mUriList.add(getIntent().getStringExtra("ImagesURI" + i));
+                mExpandList.add(getIntent().getStringExtra("ImagesURI" + i));
+
+                Log.d("chenyisheng1", getIntent().getStringExtra("ImagesURI" + i));
             }
             if (count != 9) {
                 mUriList.add(String.valueOf(R.drawable.ic_add_black_72dp));
             }
         }
-        PublishGridViewAdapter adapter = new PublishGridViewAdapter(this);
+        if (adapter == null) {
+            adapter = new PublishGridViewAdapter(this);
+        }
         adapter.setUris(mUriList);
         gvPictures.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 初始化TakePhoto开源库,实现拍照以及从相册中选择图片
+     */
+    private void initTakePhoto() {
+        if (mTakePhoto == null) {
+            //获得对象
+            mTakePhoto = getTakePhoto();
+            //图片文件名
+            String mImageName = "sharePhoto" + new Random(1).nextInt() + ".jpg";
+            File file = new File(this.getExternalFilesDir(null), mImageName);
+            mUri = Uri.fromFile(file);
+
+            //进行图片剪切
+            int size = Math.max(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
+            mCropOptions = new CropOptions.Builder().setOutputX(size).setOutputY(size).setWithOwnCrop(false).create();  //true表示使用TakePhoto自带的裁剪工具
+
+        }
+        //进行图片压缩
+        CompressConfig compressConfig = new CompressConfig.Builder().create();
+//        //大小            像素
+        //setMaxSize(1024).setMaxPixel(1024*1024).create();
+//
+        /*
+         * 启用图片压缩
+         * @param config 压缩图片配置
+         * @param showCompressDialog 压缩时是否显示进度对话框
+         */
+        mTakePhoto.onEnableCompress(compressConfig, true);
     }
 
     @Override
@@ -82,6 +163,83 @@ public class PublishActivity extends AppCompatActivity implements View.OnClickLi
 
     private void toast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (position != mUriList.size() - 1) {
+            zoomPicture(parent, view, position);
+        } else {
+            showSelectDialog();
+        }
+    }
+
+    /**
+     * 显示拍照，相册选取对话框
+     */
+    private void showSelectDialog() {
+        new XPopup.Builder(this)
+//                        .maxWidth(600)
+                .asCenterList("", new String[]{"拍照", "从相册选择"},
+                        new OnSelectListener() {
+                            @Override
+                            public void onSelect(int position, String text) {
+                                switch (position) {
+                                    case 0:         //拍照
+                                        mTakePhoto.onPickFromCaptureWithCrop(mUri, mCropOptions);
+
+                                        break;
+                                    case 1:         //相册
+                                        //mTakePhoto.onPickFromGalleryWithCrop(mUri, mCropOptions);
+                                        mTakePhoto.onPickMultiple(9 - mExpandList.size());
+                                        //testMatisse();
+                                        break;
+                                }
+                            }
+                        })
+                .show();
+    }
+
+    /**
+     * 点击放大图片
+     */
+    private void zoomPicture(AdapterView<?> parent, View view, int position) {
+        //1 获取要显示的图片对象
+        final RelativeLayout relativeLayout = (RelativeLayout) parent.getAdapter().
+                getView(position, view, null);
+        final ImageView imageView = (ImageView) relativeLayout.getChildAt(position);
+        //2 使用XPopup开始显示放大后的图片
+        new XPopup.Builder(relativeLayout.getContext()).asImageViewer(imageView, position, mExpandList, new OnSrcViewUpdateListener() {
+            @Override
+            public void onSrcViewUpdate(ImageViewerPopupView popupView, int position) {
+                //3 放大效果时滑动后显示的图片
+                GridView gridView = (GridView) relativeLayout.getParent();
+                popupView.updateSrcView((ImageView) ((RelativeLayout) gridView.getChildAt(position)).getChildAt(0));
+            }
+        }, new MyOnPicturesItemClickListener.ImageLoader())
+                .show();
+    }
+
+    /**
+     * 获取照片成功后成功回调
+     */
+    @Override
+    public void takeSuccess(TResult result) {
+        super.takeSuccess(result);
+
+        if (!result.getImages().isEmpty()) {
+            mUriList.remove(mUriList.size() - 1);
+            for (int i = 0; i < result.getImages().size(); i++) {
+                mUriList.add(result.getImages().get(i).getCompressPath());
+                mExpandList.add(result.getImages().get(i).getCompressPath());
+            }
+            if (mUriList.size() < 9) {
+                mUriList.add(String.valueOf(R.drawable.ic_add_black_72dp));
+            }
+            adapter.notifyDataSetChanged();
+        } else {
+            Log.d("chenyisheng2", "isEmpty!!!!");
+        }
     }
 
 }

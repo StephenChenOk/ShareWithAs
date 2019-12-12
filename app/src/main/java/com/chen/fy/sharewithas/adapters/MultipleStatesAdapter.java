@@ -129,7 +129,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         adapter.setPictures(shareInfo.getPhotos());
         viewHolder.gvPictures.setAdapter(adapter);
         viewHolder.gvPictures.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            //GridView点解啊事件
+            //GridVie点击事件
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //GridView子布局的最外层布局

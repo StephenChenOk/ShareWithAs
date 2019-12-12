@@ -8,7 +8,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -22,6 +24,7 @@ import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.fragments.FoundFragment;
 import com.chen.fy.sharewithas.fragments.HomeFragment;
 import com.chen.fy.sharewithas.fragments.MineFragment;
+import com.zhihu.matisse.Matisse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     public static int width = 0;
     public static int height = 0;
+    public static final int REQUEST_CODE_CHOOSE = 679;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +154,10 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.
+                READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
         if (!permissionList.isEmpty()) {
             String[] permissions = permissionList.toArray(new String[permissionList.size()]);
             ActivityCompat.requestPermissions(MainActivity.this, permissions, REQUEST_CODE);
@@ -176,4 +184,15 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             default:
         }
     }
+
+    List<Uri> mSelected;
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
+//            mSelected = Matisse.obtainResult(data);
+//            Log.d("Matisse", "mSelected: " + mSelected);
+//        }
+//    }
 }

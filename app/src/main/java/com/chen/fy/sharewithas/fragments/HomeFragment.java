@@ -2,6 +2,7 @@ package com.chen.fy.sharewithas.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -43,6 +44,10 @@ import com.chen.fy.sharewithas.views.MyAttachPopupView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.AttachPopupView;
 import com.lxj.xpopup.interfaces.OnSelectListener;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
+import com.zhihu.matisse.filter.Filter;
 
 import org.devio.takephoto.app.TakePhoto;
 import org.devio.takephoto.app.TakePhotoFragment;
@@ -157,15 +162,11 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         } else {
             return;
         }
+
         initViewPager();
         initDataList();
-        initTakePhoto();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
+        // initTakePhoto();
+        // Log.d("chenyishenng3","onActivityCreated");
     }
 
     /**
@@ -179,6 +180,14 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         if (!hidden && getActivity() != null) {
             UiUtils.changeStatusBarTextImgColor(getActivity(), false);
         }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        initTakePhoto();
     }
 
     private void initView(@NonNull View view) {
@@ -346,21 +355,24 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
      * 初始化TakePhoto开源库,实现拍照以及从相册中选择图片
      */
     private void initTakePhoto() {
-        //获得对象
-        mTakePhoto = getTakePhoto();
-        //图片文件名
-        String mImageName = "sharePhoto.jpg";
-        File file = new File(mContext.getExternalFilesDir(null), mImageName);
-        mUri = Uri.fromFile(file);
+        if (mTakePhoto == null) {
+            Log.d("chensheng", "initTakePhoto");
+            //获得对象
+            mTakePhoto = getTakePhoto();
+            //图片文件名
+            String mImageName = "sharePhoto" + new Random(1).nextInt() + ".jpg";
+            File file = new File(mContext.getExternalFilesDir(null), mImageName);
+            mUri = Uri.fromFile(file);
 
-        //进行图片剪切
-        int size = Math.max(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
-        mCropOptions = new CropOptions.Builder().setOutputX(size).setOutputY(size).setWithOwnCrop(false).create();  //true表示使用TakePhoto自带的裁剪工具
+            //进行图片剪切
+            int size = Math.max(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
+            mCropOptions = new CropOptions.Builder().setOutputX(size).setOutputY(size).setWithOwnCrop(false).create();  //true表示使用TakePhoto自带的裁剪工具
 
+        }
         //进行图片压缩
         CompressConfig compressConfig = new CompressConfig.Builder().create();
 //        //大小            像素
-//        //setMaxSize(1024).setMaxPixel(1024*1024).create();
+        //setMaxSize(1024).setMaxPixel(1024*1024).create();
 //
         /*
          * 启用图片压缩
@@ -370,21 +382,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         mTakePhoto.onEnableCompress(compressConfig, true);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //以下代码为处理Android6.0、7.0动态权限所需(TakePhoto所需)
-        PermissionManager.TPermissionType type = PermissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionManager.handlePermissionsResult(getActivity(), type, mInvokeParam, this);
-    }
-
-    @Override
-    public PermissionManager.TPermissionType invoke(InvokeParam invokeParam) {
-        PermissionManager.TPermissionType type = PermissionManager.checkPermission(TContextWrap.of(this), invokeParam.getMethod());
-        if (PermissionManager.TPermissionType.WAIT.equals(type)) {
-            this.mInvokeParam = invokeParam;
-        }
-        return type;
-    }
 
     /**
      * 获取照片成功后成功回调
@@ -392,12 +389,19 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     @Override
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);
-        Intent intent = new Intent(mContext, PublishActivity.class);
-        intent.putExtra("ImagesSize", result.getImages().size());
-        for (int i = 0; i < result.getImages().size(); i++) {
-            intent.putExtra("ImagesURI" + i, result.getImages().get(i).getCompressPath());
+
+        if (!result.getImages().isEmpty()) {
+            Log.d("HomeFragmentLog", "" + result.getImages().size());
+            Intent intent = new Intent(mContext, PublishActivity.class);
+            intent.putExtra("ImagesSize", result.getImages().size());
+            for (int i = 0; i < result.getImages().size(); i++) {
+                Log.d("HomeFragmentLog", "ssss" + result.getImages().get(i).getCompressPath());
+                intent.putExtra("ImagesURI" + i, result.getImages().get(i).getCompressPath());
+            }
+            startActivity(intent);
+        } else {
+            Log.d("HomeFragmentLog", "isEmpty!!!!");
         }
-        startActivity(intent);
     }
 
     @Override
@@ -418,6 +422,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                                             case 1:         //相册
                                                 //mTakePhoto.onPickFromGalleryWithCrop(mUri, mCropOptions);
                                                 mTakePhoto.onPickMultiple(9);
+                                                //testMatisse();
                                                 break;
                                         }
                                     }

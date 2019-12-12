@@ -4,10 +4,11 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/gv_iv_picture"
-        android:background="#eee"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:id="@+id/gv_publish_iv_picture"
+        android:background="#efefef"
+        android:layout_width="wrap_content"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/img" />
 
 </RelativeLayout>
