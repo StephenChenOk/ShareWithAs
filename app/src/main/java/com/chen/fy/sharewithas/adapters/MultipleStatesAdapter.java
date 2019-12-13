@@ -124,6 +124,10 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ViewGroup.LayoutParams params = viewHolder.rlBox.getLayoutParams();
             params.width = (int) (MainActivity.width / 1.9);
             viewHolder.rlBox.setLayoutParams(params);
+        }else{
+            ViewGroup.LayoutParams params = viewHolder.rlBox.getLayoutParams();
+            params.width = (int) (MainActivity.width / 1.2);
+            viewHolder.rlBox.setLayoutParams(params);
         }
         PicturesGridViewAdapter adapter = new PicturesGridViewAdapter(mContext);
         adapter.setPictures(shareInfo.getPhotos());

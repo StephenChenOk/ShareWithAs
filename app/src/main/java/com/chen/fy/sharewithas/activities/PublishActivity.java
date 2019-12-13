@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -49,6 +50,10 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
     private ArrayList<Object> mUriList;
     private ArrayList<Object> mExpandList;
 
+    private LinearLayout llLocationBox;
+    private LinearLayout llAlarmBox;
+    private LinearLayout llPersonBox;
+
     /**
      * 拍照控件
      */
@@ -70,6 +75,11 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
 
         initView();
         initData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initTakePhoto();
     }
 
@@ -78,10 +88,16 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
         Button ivPublish = findViewById(R.id.btn_publish);
         etContent = findViewById(R.id.et_content_publish);
         gvPictures = findViewById(R.id.gv_box_public);
-        gvPictures.setOnItemClickListener(this);
+        llLocationBox = findViewById(R.id.ll_location_publish_box);
+        llAlarmBox = findViewById(R.id.ll_alarm_publish_box);
+        llPersonBox = findViewById(R.id.ll_person_publish_box);
 
+        gvPictures.setOnItemClickListener(this);
         ivReturn.setOnClickListener(this);
         ivPublish.setOnClickListener(this);
+        llLocationBox.setOnClickListener(this);
+        llAlarmBox.setOnClickListener(this);
+        llPersonBox.setOnClickListener(this);
     }
 
     public void initData() {
@@ -97,6 +113,9 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
         if (!mExpandList.isEmpty()) {
             mExpandList.clear();
         }
+        if (adapter == null) {
+            adapter = new PublishGridViewAdapter(this);
+        }
         int count;
         if (getIntent() != null) {
             count = getIntent().getIntExtra("ImagesSize", 0);
@@ -108,10 +127,9 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
             }
             if (count != 9) {
                 mUriList.add(String.valueOf(R.drawable.ic_add_black_72dp));
+            } else {
+                adapter.setAdd(false);
             }
-        }
-        if (adapter == null) {
-            adapter = new PublishGridViewAdapter(this);
         }
         adapter.setUris(mUriList);
         gvPictures.setAdapter(adapter);
@@ -122,19 +140,18 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
      * 初始化TakePhoto开源库,实现拍照以及从相册中选择图片
      */
     private void initTakePhoto() {
-        if (mTakePhoto == null) {
-            //获得对象
-            mTakePhoto = getTakePhoto();
-            //图片文件名
-            String mImageName = "sharePhoto" + new Random(1).nextInt() + ".jpg";
-            File file = new File(this.getExternalFilesDir(null), mImageName);
-            mUri = Uri.fromFile(file);
+        //获得对象
+        mTakePhoto = getTakePhoto();
+        //图片文件名
+        String mImageName = "sharePhoto" + new Random(1).nextInt() + ".jpg";
+        File file = new File(this.getExternalFilesDir(null), mImageName);
+        mUri = Uri.fromFile(file);
 
-            //进行图片剪切
-            int size = Math.max(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
-            mCropOptions = new CropOptions.Builder().setOutputX(size).setOutputY(size).setWithOwnCrop(false).create();  //true表示使用TakePhoto自带的裁剪工具
+        //进行图片剪切
+        int size = Math.max(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
+        mCropOptions = new CropOptions.Builder().setOutputX(size).setOutputY(size).setWithOwnCrop(false).create();  //true表示使用TakePhoto自带的裁剪工具
 
-        }
+
         //进行图片压缩
         CompressConfig compressConfig = new CompressConfig.Builder().create();
 //        //大小            像素
@@ -155,8 +172,16 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
                 finish();
                 break;
             case R.id.btn_publish:
-
                 toast("发表");
+                break;
+            case R.id.ll_location_publish_box:
+                toast("所在位置");
+                break;
+            case R.id.ll_alarm_publish_box:
+                toast("提醒谁看");
+                break;
+            case R.id.ll_person_publish_box:
+                toast("谁可以看");
                 break;
         }
     }
@@ -167,10 +192,10 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (position != mUriList.size() - 1) {
-            zoomPicture(parent, view, position);
-        } else {
+        if (mUriList.size() != 10 && position == mUriList.size() - 1) {
             showSelectDialog();
+        } else {
+            zoomPicture(parent, view, position);
         }
     }
 
@@ -230,11 +255,15 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
         if (!result.getImages().isEmpty()) {
             mUriList.remove(mUriList.size() - 1);
             for (int i = 0; i < result.getImages().size(); i++) {
+                Log.d("PublishActivity.Log", "1:" + result.getImages().get(i).getCompressPath());
                 mUriList.add(result.getImages().get(i).getCompressPath());
                 mExpandList.add(result.getImages().get(i).getCompressPath());
             }
             if (mUriList.size() < 9) {
                 mUriList.add(String.valueOf(R.drawable.ic_add_black_72dp));
+                adapter.setAdd(true);
+            } else {
+                adapter.setAdd(false);
             }
             adapter.notifyDataSetChanged();
         } else {

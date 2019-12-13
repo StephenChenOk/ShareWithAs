@@ -11,9 +11,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.NewsDetailActivity;
@@ -27,8 +29,15 @@ import com.chen.fy.sharewithas.utils.UiUtils;
 import com.chen.fy.sharewithas.vassonic.SonicJavaScriptInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshFooter;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,15 +54,16 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
 
     private String DEMO_URL;
 
+    private View mView;
+
     private NewsAdapter mNewsAdapter;
     private List<News> newsList;
     private RecyclerView rvNewsList;
-
-    private View mView;
+    private SmartRefreshLayout mRefreshLayout;
 
     private int page = 1;
 
-    private int mCurrentColIndex = 3;
+    private int mCurrentColIndex = 2;
 
     /**
      * 请求的数量
@@ -61,11 +71,13 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
     private int[] mCols = new int[]{Constants.NEWS_COL5, Constants.NEWS_COL7, Constants.NEWS_COL8,
             Constants.NEWS_COL10, Constants.NEWS_COL11};
 
+    //第一次进入界面
+    private boolean isFirstEnter = true;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.found_fragment_layout, container, false);
-
         return mView;
     }
 
@@ -75,11 +87,12 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
 
         initView();
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        initData();
 
+        initData();
     }
 
     /**
@@ -97,6 +110,7 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
 
     private void initView() {
         rvNewsList = mView.findViewById(R.id.rv_news);
+        mRefreshLayout = mView.findViewById(R.id.refreshLayout_found);
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);//1 表示列数
         rvNewsList.setLayoutManager(layoutManager);
     }
@@ -107,21 +121,61 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
         mNewsAdapter.setNewsList(newsList);
         mNewsAdapter.setOnItemClickListener(this);
         rvNewsList.setAdapter(mNewsAdapter);
-        refreshData(page);
+
+        if (isFirstEnter) {
+            isFirstEnter = false;
+            mRefreshLayout.autoRefresh();//第一次进入触发自动刷新
+        }
+
+        //下拉刷新
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                //refreshData();
+            }
+        });
+
+        //底部刷新
+        RefreshFooter footer = mRefreshLayout.getRefreshFooter();
+        if (footer instanceof ClassicsFooter) {
+            mRefreshLayout.getRefreshFooter().getView().findViewById(ClassicsFooter.ID_TEXT_TITLE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getContext(), "点击测试", Toast.LENGTH_SHORT).show();
+                    mRefreshLayout.finishLoadMore();
+                }
+            });
+        }
+
+        mRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull final RefreshLayout refreshLayout) {
+                refreshLayout.getLayout().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mNewsAdapter.getItemCount() > 30) {
+                            Toast.makeText(getContext(), "数据全部加载完毕", Toast.LENGTH_SHORT).show();
+                            refreshLayout.finishLoadMoreWithNoMoreData();//将不会再次触发加载更多事件
+                        } else {
+                            //refreshData();
+                            mRefreshLayout.finishLoadMore();
+                        }
+                    }
+                }, 2000);
+            }
+        });
     }
 
     /**
      * 使用AsyncTask发起请求获取新闻数据
-     *
-     * @param page 请求的页面
      */
-    private void refreshData(final int page) {
+    private void refreshData() {
 
         //构建AsyncTask对象，传入请求需要的参数，再开启AsyncTask
-        new NewsListAsyncTask(mNewsAdapter, newsList).execute(new Integer[]{
+        new NewsListAsyncTask(mNewsAdapter, newsList, mRefreshLayout).execute(new Integer[]{
                 mCols[mCurrentColIndex],
                 Constants.NEWS_NUM, page});
-
+        //page++;
     }
 
     @Override
@@ -148,10 +202,12 @@ class NewsListAsyncTask extends AsyncTask<Integer, Void, String> {
 
     private NewsAdapter mAdapter;
     private List<News> list;
+    private WeakReference<SmartRefreshLayout> refreshWeakReference;
 
-    NewsListAsyncTask(NewsAdapter adapter, List<News> list) {
+    NewsListAsyncTask(NewsAdapter adapter, List<News> list, SmartRefreshLayout smartRefreshLayout) {
         this.mAdapter = adapter;
         this.list = list;
+        this.refreshWeakReference = new WeakReference<>(smartRefreshLayout);
     }
 
     /**
@@ -213,9 +269,14 @@ class NewsListAsyncTask extends AsyncTask<Integer, Void, String> {
         }.getType();
         BaseResponse<List<News>> newsListResponse = gson.fromJson(s, jsonType);
         list.addAll(newsListResponse.getData());
+        Log.d("FoundFragment.Log", ":" + newsListResponse.getData());
         //添加新闻成功后，通知适配器更新
         mAdapter.setNewsList(list);
         mAdapter.notifyDataSetChanged();
+
+        //取消显示刷新框
+        refreshWeakReference.get().finishRefresh();
+
         super.onPostExecute(s);
     }
 }

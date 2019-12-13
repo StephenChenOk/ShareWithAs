@@ -1,7 +1,6 @@
 package com.chen.fy.sharewithas.adapters;
 
 import android.content.Context;
-import android.icu.util.LocaleData;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
 
@@ -21,12 +18,18 @@ public class PublishGridViewAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Object> mUriList;
 
+    private boolean isAdd = true;
+
     public PublishGridViewAdapter(Context context) {
         mContext = context;
     }
 
     public void setUris(ArrayList<Object> list) {
         mUriList = list;
+    }
+
+    public void setAdd(boolean isAdd){
+        this.isAdd = isAdd;
     }
 
     /**
@@ -78,16 +81,19 @@ public class PublishGridViewAdapter extends BaseAdapter {
 //        params.width = MainActivity.width / 3 - MainActivity.width / 10;
 //        params.height = MainActivity.width / 3 - MainActivity.width / 10;
 //        viewHolder.ivPicture.setLayoutParams(params);
-        if (mUriList.size() != 9 && position == mUriList.size() - 1){
+
+
+        if (isAdd && position == mUriList.size() - 1) {
             Glide.with(mContext)
                     .load(Integer.valueOf(String.valueOf(mUriList.get(position))))
                     .apply(new RequestOptions().fitCenter())
                     .into(viewHolder.ivPicture);
-        } else{
+        } else if (position != mUriList.size()) {
             Glide.with(mContext)
                     .load(mUriList.get(position))
                     .into(viewHolder.ivPicture);
         }
+
         return view;
     }
 

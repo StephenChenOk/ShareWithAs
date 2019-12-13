@@ -2,7 +2,6 @@ package com.chen.fy.sharewithas.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -28,8 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.activities.PublishActivity;
@@ -42,27 +39,21 @@ import com.chen.fy.sharewithas.interfaces.OnMoreOptionClickListener;
 import com.chen.fy.sharewithas.utils.UiUtils;
 import com.chen.fy.sharewithas.views.MyAttachPopupView;
 import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.core.AttachPopupView;
 import com.lxj.xpopup.interfaces.OnSelectListener;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.GlideEngine;
-import com.zhihu.matisse.filter.Filter;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.devio.takephoto.app.TakePhoto;
 import org.devio.takephoto.app.TakePhotoFragment;
 import org.devio.takephoto.compress.CompressConfig;
 import org.devio.takephoto.model.CropOptions;
-import org.devio.takephoto.model.InvokeParam;
-import org.devio.takephoto.model.TContextWrap;
 import org.devio.takephoto.model.TResult;
-import org.devio.takephoto.permission.PermissionManager;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.UUID;
 
 public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
@@ -71,12 +62,14 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     private static ViewPager mViewPager;
     private LinearLayout mPointBox;
     private TextView tvTitle;
+    private SmartRefreshLayout mRefreshLayout;
+
+    private MultipleStatesAdapter mMultipleStatesAdapter;
 
     /**
      * 拍照控件
      */
     private TakePhoto mTakePhoto;
-    private InvokeParam mInvokeParam;
 
     /**
      * 图片剪切以及图片地址
@@ -100,7 +93,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             R.drawable.img5
     };
     //图片标题
-    public static String[] mImagesTitle = {
+    private static String[] mImagesTitle = {
             "img1",
             "img2",
             "img3",
@@ -113,18 +106,41 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     //判断当前页面是否是滑动状态,解决当页面手动滑动后不能继续进行自动滑动
     private boolean mIsScroll = false;
 
-    /**
-     * 让图片自己动起来,采用异步handel,因为在Thread中不可以进行UI操作,所有可以用handel实行异步UI操作
-     */
-    public static Handler handler = new Handler(Looper.getMainLooper()) {
+    //自动轮播
+    public static final int BANNER_CODE = 0;
+    //刷新
+    private final int REFRESH_CODE = 1;
+    //更新UI
+    private final int UPDATE_UI_CODE = 2;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            int item = mViewPager.getCurrentItem() + 1;
-            mViewPager.setCurrentItem(item);
+            switch (msg.what) {
+                case BANNER_CODE:    //让图片自己动起来
+                    super.handleMessage(msg);
+                    int item = mViewPager.getCurrentItem() + 1;
+                    mViewPager.setCurrentItem(item);
 
-            //延迟发消息
-            handler.sendEmptyMessageDelayed(0, 3000);
+                    //自动轮播
+                    mHandler.sendEmptyMessageDelayed(BANNER_CODE, 3000);
+                    break;
+                case REFRESH_CODE:
+                    mRefreshLayout.finishRefresh();
+                    break;
+                case UPDATE_UI_CODE:
+                    if (mMultipleStatesAdapter == null) {
+                        mMultipleStatesAdapter = new MultipleStatesAdapter(mContext);
+                        mMultipleStatesAdapter.setShareDataList(mShareInfos);
+                        mMultipleStatesAdapter.setItemClickListener(onPicturesItemClickListener);
+                        mMultipleStatesAdapter.setMoreOptionClickListener(onMoreOptionClickListener);
+                        mRecyclerView.setAdapter(mMultipleStatesAdapter);
+                    }
+                    mMultipleStatesAdapter.notifyDataSetChanged();
+
+                    mHandler.sendEmptyMessageDelayed(REFRESH_CODE, 200);
+                    break;
+            }
         }
     };
 
@@ -138,6 +154,8 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
      */
     private MyOnMoreOptionClickListener onMoreOptionClickListener = new MyOnMoreOptionClickListener();
 
+    private boolean isFirstEnter = true;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -149,8 +167,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         super.onViewCreated(view, savedInstanceState);
 
         initView(view);
-        //设置手机应用内部状态栏字体图标为白色
-        //changeStatusBarTextImgColor(false);
     }
 
     @Override
@@ -164,9 +180,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         }
 
         initViewPager();
-        initDataList();
-        // initTakePhoto();
-        // Log.d("chenyishenng3","onActivityCreated");
     }
 
     /**
@@ -198,6 +211,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         TextView tvSearch = view.findViewById(R.id.search_home);
         mRecyclerView = view.findViewById(R.id.rv_home);
         ImageView ivTakePhotoLogo = view.findViewById(R.id.take_photo_logo_home);
+        mRefreshLayout = view.findViewById(R.id.refreshLayout_home);
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);//1 表示列数
         mRecyclerView.setLayoutManager(layoutManager);
@@ -205,11 +219,28 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         //设置点击事件
         tvSearch.setOnClickListener(this);
         ivTakePhotoLogo.setOnClickListener(this);
+
+        if (isFirstEnter) {
+            isFirstEnter = false;
+            mRefreshLayout.autoRefresh();//第一次进入触发自动刷新
+        }
+
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initDataList();
+                    }
+                }).start();
+            }
+        });
     }
 
     private void initViewPager() {
         //1 设置顶部的自动轮转图
-        mViewPager.setAdapter(new MyViewPagerAdapter(getContext()));
+        mViewPager.setAdapter(new MyViewPagerAdapter(mHandler));
         //2 获取轮播图的图片和点
         mImages = new ArrayList<>();
         for (int i = 0; i < mImagesId.length; i++) {
@@ -222,10 +253,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             mImages.add(imageView);
             //添加点
             ImageView point = new ImageView(getContext());
-//            Glide.with(mContext)
-//                    .load(R.drawable.point_selctor)
-//                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true))
-//                    .into(point);
             point.setBackgroundResource(R.drawable.point_selctor);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(20, 20); //自定义一个布局
             if (i == 0) {
@@ -245,7 +272,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         mViewPager.addOnPageChangeListener(this);
 
         //5 第一次进入时延迟发消息
-        handler.sendEmptyMessageDelayed(0, 3000);
+        mHandler.sendEmptyMessageDelayed(BANNER_CODE, 3000);
     }
 
     private void initDataList() {
@@ -256,49 +283,48 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             mShareInfos.clear();
         }
 
-        Random random = new Random();
-        for (int i = 0; i < 10; i++) {
-            getDataList(random);
-        }
+        refreshData();
 
-        MultipleStatesAdapter adapter = new MultipleStatesAdapter(mContext);
-        adapter.setShareDataList(mShareInfos);
-        adapter.setItemClickListener(onPicturesItemClickListener);
-        adapter.setMoreOptionClickListener(onMoreOptionClickListener);
-        mRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        mHandler.sendEmptyMessage(UPDATE_UI_CODE);
     }
 
-    private void getDataList(Random random) {
+    private void refreshData() {
+        Log.d("HomeFragment.Log", "refreshData");
+        Random random = new Random();
         Bitmap bitmap;
-        ArrayList<Object> list = new ArrayList<>();
-        switch (random.nextInt(2)) {
-            case 0:
-                ShareInfo shareInfo1 = new ShareInfo();
-                shareInfo1.setType(1);
-                shareInfo1.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
-                shareInfo1.setName("文字");
-                shareInfo1.setContent("文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局");
-                mShareInfos.add(shareInfo1);
-                break;
-            case 1:
-                ShareInfo shareInfo2 = new ShareInfo();
-                shareInfo2.setType(2);
-                shareInfo2.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
-                shareInfo2.setName("多图片");
-                shareInfo2.setContent("多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局");
-                for (int i = 0; i < random.nextInt(8) + 1; i++) {
-                    if (i % 2 == 0) {
-                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
-                    } else {
-                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img11);
+        ArrayList<Object> list;
+        for (int i = 0; i < 9; i++) {
+            switch (random.nextInt(2)) {
+                case 0:
+                    ShareInfo shareInfo1 = new ShareInfo();
+                    shareInfo1.setType(1);
+                    shareInfo1.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
+                    shareInfo1.setName("文字");
+                    shareInfo1.setContent("文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局");
+                    mShareInfos.add(shareInfo1);
+                    break;
+                case 1:
+                    list = new ArrayList<>();
+                    ShareInfo shareInfo2 = new ShareInfo();
+                    shareInfo2.setType(2);
+                    shareInfo2.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
+                    shareInfo2.setName("多图片");
+                    shareInfo2.setContent("多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局");
+                    for (int j = 0; j < random.nextInt(8) + 1; j++) {
+                        if (j % 2 == 0) {
+                            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
+                        } else {
+                            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img11);
+                        }
+                        list.add(bitmap);
                     }
-                    list.add(bitmap);
-                }
-                shareInfo2.setPhotos(list);
-                mShareInfos.add(shareInfo2);
-                break;
+                    shareInfo2.setPhotos(list);
+                    Log.d("HomeFragment.Log", "Size:" + list.size());
+                    mShareInfos.add(shareInfo2);
+                    break;
+            }
         }
+
     }
 
     /**
@@ -346,8 +372,8 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
         } else if (i == ViewPager.SCROLL_STATE_IDLE) {   //静止状态
             mIsScroll = false;
-            handler.removeCallbacksAndMessages(null);   //清除消息
-            handler.sendEmptyMessageDelayed(0, 3000);
+            mHandler.removeCallbacksAndMessages(null);   //清除消息
+            mHandler.sendEmptyMessageDelayed(BANNER_CODE, 3000);
         }
     }
 
@@ -391,11 +417,9 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         super.takeSuccess(result);
 
         if (!result.getImages().isEmpty()) {
-            Log.d("HomeFragmentLog", "" + result.getImages().size());
             Intent intent = new Intent(mContext, PublishActivity.class);
             intent.putExtra("ImagesSize", result.getImages().size());
             for (int i = 0; i < result.getImages().size(); i++) {
-                Log.d("HomeFragmentLog", "ssss" + result.getImages().get(i).getCompressPath());
                 intent.putExtra("ImagesURI" + i, result.getImages().get(i).getCompressPath());
             }
             startActivity(intent);

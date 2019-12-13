@@ -44,8 +44,8 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_marginLeft="8dp"
-        android:background="@null"
         android:layout_marginTop="13dp"
+        android:background="@null"
         android:gravity="top"
         android:hint="写下这时刻的想法"
         android:textSize="17sp" />
@@ -55,8 +55,105 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:horizontalSpacing="3dp"
         android:numColumns="3"
-        android:verticalSpacing="3dp"
-        android:horizontalSpacing="3dp"/>
+        android:verticalSpacing="3dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="40dp"
+        android:background="#eee" />
+
+    <!--所在位置-->
+    <LinearLayout
+        android:id="@+id/ll_location_publish_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/item_selector"
+        android:gravity="center_vertical"
+        android:padding="15dp">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_location_on_green_32dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:text="所在位置"
+            android:textColor="#444"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_arrow_forward_16dp" />
+    </LinearLayout>
+
+    <!--提醒谁看-->
+    <LinearLayout
+        android:id="@+id/ll_alarm_publish_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_selector"
+        android:gravity="center_vertical"
+        android:padding="15dp">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_alarm_green_32dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:text="提醒谁看"
+            android:textColor="#444"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_arrow_forward_16dp" />
+    </LinearLayout>
+
+    <!--谁可以看-->
+    <LinearLayout
+        android:id="@+id/ll_person_publish_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_selector"
+        android:gravity="center_vertical"
+        android:padding="15dp">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_person_32dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:text="谁可以看"
+            android:textColor="#444"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_arrow_forward_16dp" />
+    </LinearLayout>
 
 </LinearLayout>

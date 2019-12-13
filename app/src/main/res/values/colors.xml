@@ -5,6 +5,7 @@
     <color name="colorAccent">#D81B60</color>
     <color name="color_text_normal">#aaaaaa</color>
     <color name="color_text_selected">#008577</color>
-    <color name="item_selected">#EEEEEE</color>
+    <color name="item_selected">#EFEFEF</color>
     <color name="colorDivider">#4DAAA9A9</color>
+    <color name="colorBackgroundDark">#f2f2f2</color>
 </resources>

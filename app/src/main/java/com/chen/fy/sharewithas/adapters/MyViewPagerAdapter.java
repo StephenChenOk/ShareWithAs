@@ -1,9 +1,11 @@
 package com.chen.fy.sharewithas.adapters;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +15,10 @@ import com.chen.fy.sharewithas.fragments.HomeFragment;
 
 public class MyViewPagerAdapter extends PagerAdapter {
 
-    private Context mContext;
+    private Handler mHandler;
 
-    public MyViewPagerAdapter(Context context) {
-        mContext = context;
+    public MyViewPagerAdapter(Handler handler){
+        this.mHandler = handler;
     }
 
     /**
@@ -47,24 +49,26 @@ public class MyViewPagerAdapter extends PagerAdapter {
      */
     @NonNull
     @Override
+    @SuppressLint("ClickableViewAccessibility")   //抑制点击事件的警告，因为重写onTouch方法时有可能会和onClick事件冲突
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
 
         ImageView imageView = HomeFragment.mImages.get(position % HomeFragment.mImages.size());
 
         //设置触摸事件,当用户点击了页面时,页面不再自己往后动,应该做停留
+
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:   //手指按下
-                        HomeFragment.handler.removeCallbacksAndMessages(null);  //移除所有的回调以及消息
+                        mHandler.removeCallbacksAndMessages(null);  //移除所有的回调以及消息
                         break;
                     case MotionEvent.ACTION_MOVE:   //移动
                         break;
                     case MotionEvent.ACTION_UP:     //离开
-                        HomeFragment.handler.removeCallbacksAndMessages(null);  //移除所有的回调以及消息
-                        HomeFragment.handler.sendEmptyMessageDelayed(0, 3000);
+                        mHandler.removeCallbacksAndMessages(null);  //移除所有的回调以及消息
+                        mHandler.sendEmptyMessageDelayed(HomeFragment.BANNER_CODE, 3000);
                         break;
                 }
 

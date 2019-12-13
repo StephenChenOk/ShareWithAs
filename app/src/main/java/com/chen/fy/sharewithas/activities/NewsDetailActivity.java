@@ -199,7 +199,9 @@ public class NewsDetailActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-
+    /**
+     * 拦截器
+     */
     private static class OfflinePkgSessionConnection extends SonicSessionConnection {
 
         private final WeakReference<Context> context;
