@@ -63,14 +63,6 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
 
     private int page = 1;
 
-    private int mCurrentColIndex = 2;
-
-    /**
-     * 请求的数量
-     */
-    private int[] mCols = new int[]{Constants.NEWS_COL5, Constants.NEWS_COL7, Constants.NEWS_COL8,
-            Constants.NEWS_COL10, Constants.NEWS_COL11};
-
     //第一次进入界面
     private boolean isFirstEnter = true;
 
@@ -127,55 +119,54 @@ public class FoundFragment extends Fragment implements OnItemClickListener {
             mRefreshLayout.autoRefresh();//第一次进入触发自动刷新
         }
 
-        //下拉刷新
+        //顶部下拉刷新
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                //refreshData();
+                refreshData();
             }
         });
 
-        //底部刷新
-        RefreshFooter footer = mRefreshLayout.getRefreshFooter();
-        if (footer instanceof ClassicsFooter) {
-            mRefreshLayout.getRefreshFooter().getView().findViewById(ClassicsFooter.ID_TEXT_TITLE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getContext(), "点击测试", Toast.LENGTH_SHORT).show();
-                    mRefreshLayout.finishLoadMore();
-                }
-            });
-        }
-
+        //底部下拉刷新，加载更多新闻
         mRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull final RefreshLayout refreshLayout) {
                 refreshLayout.getLayout().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (mNewsAdapter.getItemCount() > 30) {
+                        if (mNewsAdapter.getItemCount() > 5 * Constants.NEWS_NUM) {
                             Toast.makeText(getContext(), "数据全部加载完毕", Toast.LENGTH_SHORT).show();
                             refreshLayout.finishLoadMoreWithNoMoreData();//将不会再次触发加载更多事件
                         } else {
-                            //refreshData();
-                            mRefreshLayout.finishLoadMore();
+                            addMoreNews();
                         }
                     }
-                }, 2000);
+                }, 0);
             }
         });
     }
 
     /**
-     * 使用AsyncTask发起请求获取新闻数据
+     * 顶部下拉刷新，重新刷新新闻
      */
     private void refreshData() {
+        newsList.clear();
+        page = 1;
+        //创建一个AsyncTask对象进行网络请求
+        NewsListAsyncTask newsListAsyncTask = new NewsListAsyncTask(mNewsAdapter, newsList, mRefreshLayout);
+        newsListAsyncTask.execute(new Integer[]{Constants.NEWS_NUM, page});
+        page++;
+    }
 
-        //构建AsyncTask对象，传入请求需要的参数，再开启AsyncTask
-        new NewsListAsyncTask(mNewsAdapter, newsList, mRefreshLayout).execute(new Integer[]{
-                mCols[mCurrentColIndex],
-                Constants.NEWS_NUM, page});
-        //page++;
+    /**
+     * 底部下拉刷新。添加新闻
+     */
+    private void addMoreNews() {
+        //创建一个AsyncTask对象进行网络请求
+        NewsListAsyncTask newsListAsyncTask = new NewsListAsyncTask(mNewsAdapter, newsList, mRefreshLayout);
+        newsListAsyncTask.execute(new Integer[]{Constants.NEWS_NUM, page});
+        //请求页码++
+        page++;
     }
 
     @Override
@@ -226,16 +217,16 @@ class NewsListAsyncTask extends AsyncTask<Integer, Void, String> {
      */
     @Override
     protected String doInBackground(Integer... integers) {
-        Integer col = integers[0];      //请求API所需的频道
         Integer newsNum = integers[0];  //每页新闻数量
-        Integer page = integers[0];     //当前页码
+        Integer page = integers[1];     //当前页码
 
         //1 设置请求参数，不同的接口请求参数可能不一样
         NewsRequest requestObj = new NewsRequest();
-        requestObj.setCol(col);
         requestObj.setNum(newsNum);
         requestObj.setPage(page);
         String urlParams = requestObj.toString();
+
+        Log.d("FoundFragment.Log", ":" + Constants.GENERAL_NEWS_URL + urlParams);
 
         //2 创建OkHttp请求对象
         Request request = new Request.Builder()
@@ -269,13 +260,12 @@ class NewsListAsyncTask extends AsyncTask<Integer, Void, String> {
         }.getType();
         BaseResponse<List<News>> newsListResponse = gson.fromJson(s, jsonType);
         list.addAll(newsListResponse.getData());
-        Log.d("FoundFragment.Log", ":" + newsListResponse.getData());
         //添加新闻成功后，通知适配器更新
-        mAdapter.setNewsList(list);
         mAdapter.notifyDataSetChanged();
 
         //取消显示刷新框
         refreshWeakReference.get().finishRefresh();
+        refreshWeakReference.get().finishLoadMore();
 
         super.onPostExecute(s);
     }

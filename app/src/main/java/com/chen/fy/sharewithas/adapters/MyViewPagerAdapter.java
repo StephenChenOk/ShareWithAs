@@ -52,22 +52,20 @@ public class MyViewPagerAdapter extends PagerAdapter {
     @SuppressLint("ClickableViewAccessibility")   //抑制点击事件的警告，因为重写onTouch方法时有可能会和onClick事件冲突
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
 
-        ImageView imageView = HomeFragment.mImages.get(position % HomeFragment.mImages.size());
+        ImageView imageView = HomeFragment.imageList.get(position % HomeFragment.imageList.size());
 
         //设置触摸事件,当用户点击了页面时,页面不再自己往后动,应该做停留
-
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:   //手指按下
-                        mHandler.removeCallbacksAndMessages(null);  //移除所有的回调以及消息
+                        mHandler.removeMessages(HomeFragment.BANNER_CODE);
                         break;
                     case MotionEvent.ACTION_MOVE:   //移动
                         break;
                     case MotionEvent.ACTION_UP:     //离开
-                        mHandler.removeCallbacksAndMessages(null);  //移除所有的回调以及消息
                         mHandler.sendEmptyMessageDelayed(HomeFragment.BANNER_CODE, 3000);
                         break;
                 }

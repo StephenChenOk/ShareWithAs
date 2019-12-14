@@ -7,11 +7,11 @@ import com.chen.fy.sharewithas.constants.Constants;
  */
 public class NewsRequest {
 
-    private int num;
-    private int col;
-    private int page = -1;
-    private int rand;
-    private String keyword;
+    private int num;        //每页显示数量
+    private int page = -1;  //请求的页码（一般来说页码不同数据不同，按时间排序）
+    private int rand;       //随机选取数据
+    private String keyword; //Key
+    private String word;    //关键字
 
     public int getNum() {
         return num;
@@ -19,14 +19,6 @@ public class NewsRequest {
 
     public void setNum(int num) {
         this.num = num;
-    }
-
-    public int getCol() {
-        return col;
-    }
-
-    public void setCol(int col) {
-        this.col = col;
     }
 
     public int getPage() {
@@ -53,10 +45,18 @@ public class NewsRequest {
         this.keyword = keyword;
     }
 
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
     @Override
     public String toString() {
         String retValue;
-        retValue = "?" + "&key=" + Constants.API_KEY + "&num=" + num + "&col=" + col;
+        retValue = "?" + "&key=" + Constants.API_KEY + "&num=" + num;
         if (page != -1) {
             retValue += "&page=" + page;
         }

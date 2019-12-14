@@ -2,6 +2,7 @@ package com.chen.fy.sharewithas.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.activities.PublishActivity;
@@ -81,25 +83,11 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
     private ArrayList<ShareInfo> mShareInfos;
 
-    //图片集合
-    public static ArrayList<ImageView> mImages;
-
-    //图片id
-    private int[] mImagesId = {
-            R.drawable.img1,
-            R.drawable.img2,
-            R.drawable.img6,
-            R.drawable.img4,
-            R.drawable.img5
-    };
+    //图片
+    private TypedArray mImages;
+    public static ArrayList<ImageView> imageList;
     //图片标题
-    private static String[] mImagesTitle = {
-            "img1",
-            "img2",
-            "img3",
-            "img4",
-            "img5"
-    };
+    private String[] mTitles;
 
     //上一个被选中图片的位置
     private int mPrePosition = 0;
@@ -116,14 +104,13 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
+            super.handleMessage(msg);
             switch (msg.what) {
                 case BANNER_CODE:    //让图片自己动起来
-                    super.handleMessage(msg);
                     int item = mViewPager.getCurrentItem() + 1;
                     mViewPager.setCurrentItem(item);
-
                     //自动轮播
-                    mHandler.sendEmptyMessageDelayed(BANNER_CODE, 3000);
+                    // mHandler.sendEmptyMessageDelayed(BANNER_CODE, 3000);
                     break;
                 case REFRESH_CODE:
                     mRefreshLayout.finishRefresh();
@@ -138,7 +125,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                     }
                     mMultipleStatesAdapter.notifyDataSetChanged();
 
-                    mHandler.sendEmptyMessageDelayed(REFRESH_CODE, 200);
+                    mHandler.sendEmptyMessageDelayed(REFRESH_CODE, 300);
                     break;
             }
         }
@@ -239,18 +226,20 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     }
 
     private void initViewPager() {
-        //1 设置顶部的自动轮转图
+        //1 获取图片和图片标题资源
+        mImages = getResources().obtainTypedArray(R.array.images);
+        mTitles = getResources().getStringArray(R.array.titles);
+        imageList = new ArrayList<>();
+        //2 设置顶部的自动轮转图
         mViewPager.setAdapter(new MyViewPagerAdapter(mHandler));
-        //2 获取轮播图的图片和点
-        mImages = new ArrayList<>();
-        for (int i = 0; i < mImagesId.length; i++) {
+        //3 获取轮播图的图片和点
+        for (int i = 0; i < mTitles.length; i++) {
             //添加图片
             ImageView imageView = new ImageView(getContext());
-            imageView.setBackgroundResource(mImagesId[i]);
             if (mContext != null) {
-                Glide.with(mContext).load(mImagesId[i]).into(imageView);
+                Glide.with(mContext).load(mImages.getResourceId(i, -1)).apply(new RequestOptions().centerCrop()).into(imageView);
             }
-            mImages.add(imageView);
+            imageList.add(imageView);
             //添加点
             ImageView point = new ImageView(getContext());
             point.setBackgroundResource(R.drawable.point_selctor);
@@ -265,13 +254,13 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             mPointBox.addView(point);
         }
 
-        //3 设置当前页面在中间位置,保证可以实现左右滑动的效果
+        //4 设置当前页面在中间位置,保证可以实现左右滑动的效果
         mViewPager.setCurrentItem(250);           //要保证是实际图片数量的整数倍,也就是保证每次进入都是先显示的第一张图片
-        tvTitle.setText(mImagesTitle[mPrePosition]);
-        //4 设置状态改变监听
+        tvTitle.setText(mTitles[mPrePosition]);
+        //5 设置状态改变监听
         mViewPager.addOnPageChangeListener(this);
 
-        //5 第一次进入时延迟发消息
+        //6 第一次进入时延迟发消息
         mHandler.sendEmptyMessageDelayed(BANNER_CODE, 3000);
     }
 
@@ -347,12 +336,12 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     @Override
     public void onPageSelected(int i) {
         //设置位置
-        tvTitle.setText(mImagesTitle[i % mImages.size()]);
+        tvTitle.setText(mTitles[i % mTitles.length]);
         //把上一个高亮位置设置为灰色
         mPointBox.getChildAt(mPrePosition).setEnabled(false);
         //当前位置设置为高亮
-        mPointBox.getChildAt(i % mImages.size()).setEnabled(true);
-        mPrePosition = i % mImages.size();
+        mPointBox.getChildAt(i % mTitles.length).setEnabled(true);
+        mPrePosition = i % mTitles.length;
     }
 
     /**
@@ -372,7 +361,8 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
         } else if (i == ViewPager.SCROLL_STATE_IDLE) {   //静止状态
             mIsScroll = false;
-            mHandler.removeCallbacksAndMessages(null);   //清除消息
+            Log.d("chenchen", "Scroll");
+            mHandler.removeMessages(BANNER_CODE);
             mHandler.sendEmptyMessageDelayed(BANNER_CODE, 3000);
         }
     }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="images">
+        <item>@drawable/img1</item>
+        <item>@drawable/img2</item>
+        <item>@drawable/img6</item>
+        <item>@drawable/img4</item>
+        <item>@drawable/img5</item>
+    </string-array>
+
+    <string-array name="titles">
+        <item>解放桥</item>
+        <item>长风海洋公园</item>
+        <item>白公馆</item>
+        <item>长江索道</item>
+        <item>天生三桥</item>
+    </string-array>
+
+</resources>

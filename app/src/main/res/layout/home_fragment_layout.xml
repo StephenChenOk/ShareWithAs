@@ -41,7 +41,7 @@
                     android:gravity="center"
                     android:text="标题"
                     android:textColor="#fff"
-                    android:textSize="20sp" />
+                    android:textSize="18sp" />
 
                 <LinearLayout
                     android:id="@+id/point_box_home"
@@ -100,6 +100,7 @@
         android:background="@android:color/white"
         app:srlAccentColor="@android:color/white"
         app:srlEnableHeaderTranslationContent="false"
+        android:layout_marginTop="3dp"
         app:srlEnableLoadMore="false"
         app:srlPrimaryColor="@color/colorPrimary"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -115,8 +116,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_home"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:dividerHeight="8dp" />
+                android:layout_height="match_parent" />
         </androidx.core.widget.NestedScrollView>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

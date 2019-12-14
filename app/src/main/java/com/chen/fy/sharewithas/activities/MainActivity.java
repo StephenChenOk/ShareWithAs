@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     public static int width = 0;
     public static int height = 0;
-    public static final int REQUEST_CODE_CHOOSE = 679;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
