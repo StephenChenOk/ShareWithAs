@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
+import com.chen.fy.sharewithas.activities.UserDetailsActivity;
 import com.chen.fy.sharewithas.beans.ShareInfo;
 import com.chen.fy.sharewithas.interfaces.OnMoreOptionClickListener;
 import com.chen.fy.sharewithas.interfaces.OnPicturesItemClickListener;
+import com.chen.fy.sharewithas.interfaces.OnUserDetailsClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,11 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      */
     private OnMoreOptionClickListener mMoreOptionClickListener;
 
+    /**
+     * 头像和名称的点击事件
+     */
+    private OnUserDetailsClickListener mUserDetailsClickListener;
+
     public MultipleStatesAdapter(Context context) {
         this.mContext = context;
     }
@@ -54,6 +62,10 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public void setMoreOptionClickListener(OnMoreOptionClickListener moreOptionClickListener) {
         this.mMoreOptionClickListener = moreOptionClickListener;
+    }
+
+    public void setUserDetailsClickListener(OnUserDetailsClickListener onUserDetailsClickListener) {
+        this.mUserDetailsClickListener = onUserDetailsClickListener;
     }
 
     /**
@@ -99,18 +111,37 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     /**
+     * 设置点击事件
+     */
+    private void onClick(ImageView ivHeadIcon, TextView tvName, RelativeLayout rlMoreOptionBox, final int position) {
+        ivHeadIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mUserDetailsClickListener.onItemClick(position);
+            }
+        });
+        tvName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mUserDetailsClickListener.onItemClick(position);
+            }
+        });
+        rlMoreOptionBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMoreOptionClickListener.onclick(position, v);
+            }
+        });
+    }
+
+    /**
      * 纯文字子布局
      */
     private void setTextItemView(@NonNull TextHolder viewHolder, ShareInfo shareInfo, final int position) {
         Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
         viewHolder.tvName.setText(shareInfo.getName());
         viewHolder.tvContent.setText(shareInfo.getContent());
-        viewHolder.rlMoreOptionBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMoreOptionClickListener.onclick(position, v);
-            }
-        });
+        onClick(viewHolder.ivHeadIcon, viewHolder.tvName, viewHolder.rlMoreOptionBox, position);
     }
 
     /**
@@ -124,7 +155,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ViewGroup.LayoutParams params = viewHolder.rlBox.getLayoutParams();
             params.width = (int) (MainActivity.width / 1.9);
             viewHolder.rlBox.setLayoutParams(params);
-        }else{
+        } else {
             ViewGroup.LayoutParams params = viewHolder.rlBox.getLayoutParams();
             params.width = (int) (MainActivity.width / 1.2);
             viewHolder.rlBox.setLayoutParams(params);
@@ -142,12 +173,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 mItemClickListener.onPicturesItemClick(relativeLayout, position, shareInfo.getPhotos());
             }
         });
-        viewHolder.rlMoreOptionBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMoreOptionClickListener.onclick(position, v);
-            }
-        });
+        onClick(viewHolder.ivHeadIcon, viewHolder.tvName, viewHolder.rlMoreOptionBox, position);
     }
 
 

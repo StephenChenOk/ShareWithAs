@@ -38,6 +38,7 @@ import com.chen.fy.sharewithas.beans.ShareInfo;
 
 import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;
 import com.chen.fy.sharewithas.interfaces.OnMoreOptionClickListener;
+import com.chen.fy.sharewithas.interfaces.OnUserDetailsClickListener;
 import com.chen.fy.sharewithas.utils.UiUtils;
 import com.chen.fy.sharewithas.views.MyAttachPopupView;
 import com.lxj.xpopup.XPopup;
@@ -119,8 +120,9 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                     if (mMultipleStatesAdapter == null) {
                         mMultipleStatesAdapter = new MultipleStatesAdapter(mContext);
                         mMultipleStatesAdapter.setShareDataList(mShareInfos);
-                        mMultipleStatesAdapter.setItemClickListener(onPicturesItemClickListener);
-                        mMultipleStatesAdapter.setMoreOptionClickListener(onMoreOptionClickListener);
+                        mMultipleStatesAdapter.setItemClickListener(new MyOnPicturesItemClickListener());
+                        mMultipleStatesAdapter.setMoreOptionClickListener(new MyOnMoreOptionClickListener());
+                        mMultipleStatesAdapter.setUserDetailsClickListener(new OnUserDetailsClickListener(mContext));
                         mRecyclerView.setAdapter(mMultipleStatesAdapter);
                     }
                     mMultipleStatesAdapter.notifyDataSetChanged();
@@ -130,16 +132,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             }
         }
     };
-
-    /**
-     * 动态图片点击接口
-     */
-    private MyOnPicturesItemClickListener onPicturesItemClickListener = new MyOnPicturesItemClickListener();
-
-    /**
-     * 动态中更多选项的点击接口
-     */
-    private MyOnMoreOptionClickListener onMoreOptionClickListener = new MyOnMoreOptionClickListener();
 
     private boolean isFirstEnter = true;
 
