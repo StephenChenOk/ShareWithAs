@@ -13,7 +13,17 @@ public class Constants {
     public static String API_KEY = "ed546e6c3a7405d0e683a880e6c110a7";
     public static String GENERAL_NEWS_URL = SERVER_URL + GENERAL_NEWS_PATH;
 
-    private Constants() {
-    }
+    /**
+     * 登录功能URL
+     */
+    public static final String LOGIN_SERVER_URL = "http://xiongtianmin.online/album/user/login";
+    /**
+     * 注册、修改信息URL
+     */
+    public static final String USER_SERVER_URL = "http://xiongtianmin.online/album/user";
+    /**
+     * 头像URL
+     */
+    public static final String HEAD_ICON_SERVER_URL = "http://xiongtianmin.online/album/user/uploadHead";
 
 }

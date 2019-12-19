@@ -8,14 +8,16 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:padding="15dp">
 
         <ImageView
+            android:id="@+id/iv_return_user_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_back_black_24dp" />
 
         <ImageView
+            android:id="@+id/iv_more_option_user_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -26,9 +28,10 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:padding="25dp">
 
         <ImageView
+            android:id="@+id/iv_headIcon_user_detail"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:scaleType="centerCrop"
@@ -45,44 +48,43 @@
                 android:layout_height="wrap_content"
                 android:text="陈生"
                 android:textColor="#000000"
-                android:textSize="20sp" />
+                android:textSize="21sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:text="昵称: fy" />
+                android:text="昵称:  fy" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:text="fy679679" />
+                android:text="用户名:  fy679679" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:text="地区:广西 南宁" />
         </LinearLayout>
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#eee"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp"
+        android:background="#eee" />
 
     <RelativeLayout
+        android:id="@+id/rl_remark_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:background="@drawable/item_selector"
+        android:padding="25dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="设置备注与标签"
             android:textColor="#333"
-            android:text="设置备注与标签" />
+            android:textSize="16sp" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -95,18 +97,50 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:background="#eee" />
 
     <RelativeLayout
+        android:id="@+id/rl_authority_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:background="@drawable/item_selector"
+        android:padding="25dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="朋友权限"
             android:textColor="#333"
-            android:text="朋友权限" />
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_arrow_forward_16dp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="#eee" />
+
+    <RelativeLayout
+        android:id="@+id/rl_share_info_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_selector"
+        android:padding="25dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="朋友圈"
+            android:textColor="#333"
+            android:textSize="16sp" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -119,96 +153,62 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:background="#eee" />
+
+    <RelativeLayout
+        android:id="@+id/rl_more_info_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_selector"
+        android:padding="25dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="更多信息"
+            android:textColor="#333"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_arrow_forward_16dp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="#eee" />
+
 
     <LinearLayout
+        android:id="@+id/ll_chart_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:background="@drawable/item_selector"
+        android:gravity="center"
+        android:padding="25dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_message_blue_24dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#333"
-            android:text="电话号码" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="18074845457"
-            android:layout_marginLeft="20dp"
-            android:textColor="#4169E1"/>
+            android:layout_marginLeft="8dp"
+            android:text="发信息"
+            android:textColor="#3A5FCD"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="#eee" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#333"
-            android:text="朋友圈" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_arrow_forward_16dp" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#eee" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#333"
-            android:text="更多信息" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_arrow_forward_16dp" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="#eee" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="#4169E1"
-            android:textSize="17sp"
-            android:text="发信息" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#eee"/>
+        android:background="#eee" />
 </LinearLayout>

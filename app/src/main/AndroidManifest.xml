@@ -37,6 +37,10 @@
             android:theme="@style/MyTheme"/>
         <activity android:name=".activities.UserDetailsActivity"
             android:theme="@style/MyTheme"/>
+        <activity android:name=".activities.ModifyUsernameActivity"
+            android:theme="@style/MyTheme"/>
+        <activity android:name=".activities.ModifyPhoneNumberActivity"
+            android:theme="@style/MyTheme"/>
     </application>
 
 </manifest>

@@ -21,6 +21,5 @@ public class OnUserDetailsClickListener implements OnItemClickListener {
     public void onItemClick(int position) {
         Intent intent = new Intent(mContext, UserDetailsActivity.class);
         mContext.startActivity(intent);
-        Toast.makeText(mContext, "" + position, Toast.LENGTH_SHORT).show();
     }
 }

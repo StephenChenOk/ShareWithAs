@@ -16,6 +16,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.activities.UserDetailsActivity;
@@ -138,7 +140,8 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      * 纯文字子布局
      */
     private void setTextItemView(@NonNull TextHolder viewHolder, ShareInfo shareInfo, final int position) {
-        Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
+        //Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
+        setHeadIcon(viewHolder.ivHeadIcon);
         viewHolder.tvName.setText(shareInfo.getName());
         viewHolder.tvContent.setText(shareInfo.getContent());
         onClick(viewHolder.ivHeadIcon, viewHolder.tvName, viewHolder.rlMoreOptionBox, position);
@@ -148,7 +151,8 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      * 多图片子布局
      */
     private void setMultiplePicturesItemView(@NonNull MultiplePictureHolder viewHolder, final ShareInfo shareInfo, final int position) {
-        Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
+       // Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
+        setHeadIcon(viewHolder.ivHeadIcon);
         viewHolder.tvName.setText(shareInfo.getName());
         viewHolder.tvContent.setText(shareInfo.getContent());
         if (shareInfo.getPhotos().size() == 2 || shareInfo.getPhotos().size() == 4) {
@@ -176,6 +180,14 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         onClick(viewHolder.ivHeadIcon, viewHolder.tvName, viewHolder.rlMoreOptionBox, position);
     }
 
+    private void setHeadIcon(ImageView ivHeadIcon){
+        //设置图片圆角角度
+        RoundedCorners roundedCorners= new RoundedCorners(10);
+        //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
+        RequestOptions options=RequestOptions.bitmapTransform(roundedCorners);
+
+        Glide.with(mContext).load(R.drawable.img).apply(options).into(ivHeadIcon);
+    }
 
     @Override
     public int getItemCount() {

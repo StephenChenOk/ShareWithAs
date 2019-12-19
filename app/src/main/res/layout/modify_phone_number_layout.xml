@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <ImageView
+            android:id="@+id/iv_return_modify_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_back_black_24dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="修改昵称"
+            android:textColor="#444"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/tv_save_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:background="@drawable/item_selector"
+            android:gravity="center_vertical"
+            android:text="保存"
+            android:textColor="#555" />
+    </LinearLayout>
+
+    <!--间隔-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:background="#eee" />
+
+    <EditText
+        android:id="@+id/et_modify_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="20dp"
+        android:background="@null"
+        android:drawableBottom="@drawable/line_et"
+        android:hint="电话号码"
+        android:textCursorDrawable="@drawable/cursor_et" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="20dp"
+        android:text="留下电话好联系呀"
+        android:textColor="#aaa" />
+
+</LinearLayout>

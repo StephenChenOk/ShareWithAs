@@ -2,37 +2,35 @@ package com.chen.fy.sharewithas.fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.LoginActivity;
 import com.chen.fy.sharewithas.activities.MyInfoActivity;
-import com.chen.fy.sharewithas.beans.User;
+import com.chen.fy.sharewithas.constants.Constants;
 import com.chen.fy.sharewithas.utils.UiUtils;
-
-import org.litepal.LitePal;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 public class MineFragment extends Fragment implements View.OnClickListener {
+
+    private final int LOGIN_REQUEST_CODE = 1;
+    private final int MY_INFO_REQUEST_CODE = 2;
 
     private CircleImageView ivHeadIcon;
     private TextView tvUsername;
@@ -40,7 +38,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
 
     private View mView;
 
-    private String mUsername;
+    private int mId = -1;
 
     @Nullable
     @Override
@@ -66,23 +64,19 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
 
-        //1 获取之前的登入状态
-        getLoginState();
-        //2 根据登录与否显示不同的界面
-        showUserInfo();
-        //3 进行头像加载
-        loadHeadIcon();
-
+        //1 初始化登录状态
+        initLoginState();
     }
 
     /**
      * Fragment在show与hide状态转换时调用此方法
+     *
      * @param hidden 是否是hide状态
      */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden && getActivity()!=null){
+        if (!hidden && getActivity() != null) {
             UiUtils.changeStatusBarTextImgColor(getActivity(), false);
         }
     }
@@ -98,53 +92,32 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         tvUserInfo.setOnClickListener(this);
     }
 
-
     /**
-     * 显示游客一些简单的信息
+     * 初始化登录状态
      */
-    private void showUserInfo() {
-        if (mUsername != null && !mUsername.isEmpty()) {
-            List<User> users = LitePal.where("userId = ?", mUsername).find(User.class);
-            for (User user : users) {
-                tvUsername.setText(user.getNickname());
-                tvUserInfo.setText("个人信息>");
-            }
-        } else {
-            tvUsername.setText("登入/注册");
-            tvUserInfo.setText("我们的故事从拥有一个账号开始");
-        }
-    }
-
-    /**
-     * 获取之前的登入状态
-     */
-    private void getLoginState() {
+    private void initLoginState() {
         if (getContext() != null) {
-            SharedPreferences preferences = getContext().getSharedPreferences("login_state", MODE_PRIVATE);
-            mUsername = preferences.getString("username", "");
-        }
-    }
+            SharedPreferences preferences = getContext().getSharedPreferences("userInfo", MODE_PRIVATE);
+            mId = preferences.getInt("id", -1);
+            if (mId != -1) {  //已经登录
+                String userName = preferences.getString("userName", "后起之秀");
 
-    /**
-     * 进行头像加载
-     */
-    private void loadHeadIcon() {
-        if (mUsername != null && !mUsername.isEmpty()) {
-            if (getActivity() != null) {
-                //头像加载
-                File file = new File(getActivity().getExternalFilesDir(null), mUsername + "_headIcon.jpg");
-                Uri headIconUri = Uri.fromFile(file);
-                try {
-                    Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(headIconUri));
-                    ivHeadIcon.setImageBitmap(bitmap);                    //如果上面产生文件存在异常，则不执行
-                } catch (FileNotFoundException e) {
-                    ivHeadIcon.setImageResource(R.drawable.img);   //捕获异常后，设置头像为默认头像，程序继续执行
-                }
+                tvUsername.setText(userName);
+                tvUserInfo.setText("个人信息>");
+
             } else {
-                ivHeadIcon.setImageResource(R.drawable.img);
+                tvUsername.setText("登入/注册");
+                tvUserInfo.setText("我们的故事从拥有一个账号开始");
             }
-        } else {
-            ivHeadIcon.setImageResource(R.drawable.img);
+
+            String headUrl = preferences.getString("headUrl", Constants.LOGIN_SERVER_URL + "/asserts/headImg/default_head.jpg");
+
+            RequestOptions options = new RequestOptions()
+                    .placeholder(R.drawable.img)//图片加载出来前，显示的图片
+                    .fallback(R.drawable.img)  //url为空的时候,显示的图片
+                    .error(R.drawable.img);    //图片加载失败后，显示的图片
+
+            Glide.with(getContext()).load(headUrl).apply(options).into(ivHeadIcon);
         }
     }
 
@@ -163,17 +136,33 @@ public class MineFragment extends Fragment implements View.OnClickListener {
      * 根据登录与否跳转不同的界面
      */
     private void jumpActivity() {
-        if (mUsername == null || mUsername.isEmpty()) {   //当还没有登入账号,则进入登入界面
+        if (mId == -1) {   //当还没有登入账号,则进入登入界面
             if (getActivity() != null) {
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, LOGIN_REQUEST_CODE);
             }
         } else {                                        //已经登入账号,则进入显示个人信息界面
             if (getActivity() != null) {
                 Intent intent = new Intent(getActivity(), MyInfoActivity.class);
-                intent.putExtra("userId", mUsername);
-                startActivityForResult(intent, 2);
+                startActivityForResult(intent, MY_INFO_REQUEST_CODE);
             }
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case LOGIN_REQUEST_CODE:
+                if(resultCode == RESULT_OK) {
+                    Log.d("chenyisheng", "login");
+                }
+                break;
+            case MY_INFO_REQUEST_CODE:
+                if(resultCode == RESULT_OK) {
+                    Log.d("chenyisheng","myInfo");
+                }
+                break;
         }
     }
 }

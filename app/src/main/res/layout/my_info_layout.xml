@@ -1,6 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-</LinearLayout>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp">
+
+            <ImageView
+                android:id="@+id/iv_return_my_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/ic_arrow_back_black_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
+                android:text="个人信息"
+                android:textColor="#333"
+                android:textSize="17sp" />
+        </LinearLayout>
+
+
+        <!--间隔-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            android:background="#eee" />
+
+        <!--头像-->
+        <LinearLayout
+            android:id="@+id/ll_head_icon_box_my_info"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/item_selector"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="头像"
+                android:textColor="#666"
+                android:textSize="17sp" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_head_icon_my_info"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/img" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:gravity="center"
+                android:src="@drawable/ic_arrow_forward_16dp" />
+
+        </LinearLayout>
+
+        <!--昵称-->
+        <LinearLayout
+            android:id="@+id/ll_username_box_my_info"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/item_selector"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="昵称"
+                android:textColor="#666"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_username_my_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="匿名网友"
+                android:textSize="17sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:gravity="center"
+                android:src="@drawable/ic_arrow_forward_16dp" />
+
+        </LinearLayout>
+
+        <!--账号-->
+        <LinearLayout
+            android:id="@+id/ll_account_box_my_info"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/item_selector"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="账号"
+                android:textColor="#666"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_account_my_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="123"
+                android:textSize="17sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:gravity="center"
+                android:src="@drawable/ic_arrow_forward_16dp" />
+
+        </LinearLayout>
+
+        <!--手机号-->
+        <LinearLayout
+            android:id="@+id/ll_phone_box_my_info"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/item_selector"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="手机号"
+                android:textColor="#666"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_phone_number_my_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="18074845457"
+                android:textSize="17sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:gravity="center"
+                android:src="@drawable/ic_arrow_forward_16dp" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/btn_out_login_my_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/item_selector"
+                android:text="退出当前账号"
+                android:textColor="#ff0000"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

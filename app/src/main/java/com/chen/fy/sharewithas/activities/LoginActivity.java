@@ -1,12 +1,13 @@
 package com.chen.fy.sharewithas.activities;
 
-import android.Manifest;
 import android.content.Intent;
+
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,20 +15,30 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.chen.fy.sharewithas.R;
+import com.chen.fy.sharewithas.constants.Constants;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final String TAG = "LoginActivity.Log";
     private EditText etUsername;
     private EditText etPwd;
 
@@ -41,7 +52,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         initView();
 
-        applyPermission();
     }
 
     private void initView() {
@@ -62,51 +72,98 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * 请求登录
      */
     private void requestLogin() {
+
         String username = etUsername.getText().toString();
-        String password = etPwd.getText().toString();
+        String password1 = etPwd.getText().toString();
+        if (username.isEmpty() || password1.isEmpty()) {
+            Toast.makeText(this, "输入不可为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("account", username);
+        map.put("password", password1);
+
+        final Gson gson = new Gson();
+        String postData = gson.toJson(map);
+        Log.d(TAG, postData);
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), postData);
+        Request request = new Request.Builder()
+                .url(Constants.LOGIN_SERVER_URL)
+                .post(requestBody)
+                .build();
+
+        //创建Call
+        Call call = okHttpClient.newCall(request);
+        //加入队列 异步操作
+        call.enqueue(new Callback() {
+            //请求错误回调方法
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "连接失败");
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                parseJSON(response);
+            }
+        });
 
     }
 
-    /**
-     * 动态申请危险权限
-     */
-    private void applyPermission() {
-        //权限集合
-        List<String> permissionList = new ArrayList<>();
-        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.
-                WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.
-                READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-        }
-        if (!permissionList.isEmpty()) {  //如果有权限没有被授权,则请求权限
-            String[] permissions = permissionList.toArray(new String[permissionList.size()]);
-            ActivityCompat.requestPermissions(LoginActivity.this,
-                    permissions, REQUEST_EXTERNAL_STORAGE);
-        }
-    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)   //需要的API等级
+    private void parseJSON(Response response) {
+        JsonParser parser = new JsonParser();//Json解析
+        try {
+            //1 获取JsonObject对象
+            JsonObject jsonObject = (JsonObject) parser.parse(response.body().string());
+            Log.d(TAG, jsonObject.toString());
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_EXTERNAL_STORAGE:
-                if (grantResults.length > 0) {
-                    for (int result : grantResults) {
-                        if (result != PackageManager.PERMISSION_GRANTED) {
-                            Toast.makeText(LoginActivity.this, "必须同意所有权限才可以使用本程序!", Toast.LENGTH_SHORT).show();
-                            finish();
-                            return;
-                        }
-                    }
-                } else {
-                    Toast.makeText(LoginActivity.this, "发生未知错误", Toast.LENGTH_SHORT).show();
+            //2 分别取出数据
+            int id = Integer.parseInt(jsonObject.get("id").toString());
+
+            String account1 = jsonObject.get("account").toString();
+            String account = account1.substring(1,account1.length()-1);
+
+            String password1 = jsonObject.get("password").toString();
+            String password = password1.substring(1,password1.length()-1);
+
+            String userName1 = jsonObject.get("userName").toString();
+            String userName = userName1.substring(1,userName1.length()-1);
+
+            String headUrl1 = jsonObject.get("headUrl").toString();
+            String headUrl = headUrl1.substring(1,headUrl1.length()-1);
+
+            String phoneNumber1 = jsonObject.get("phoneNumber").toString();
+            String phoneNumber = phoneNumber1.substring(1,phoneNumber1.length()-1);
+
+            Log.d("chenyisheng", id + "," + account + "," + password + "," + userName + "," + headUrl + "," + phoneNumber);
+
+            //3 保存数据
+            SharedPreferences.Editor editorUserInfo = getSharedPreferences("userInfo", MODE_PRIVATE).edit();
+            editorUserInfo.putInt("id", id);
+            editorUserInfo.putString("account", account);
+            editorUserInfo.putString("password", password);
+            editorUserInfo.putString("userName", userName);
+            editorUserInfo.putString("headUrl", headUrl);
+            editorUserInfo.putString("phoneNumber", phoneNumber);
+            editorUserInfo.apply();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(LoginActivity.this, "登入成功", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
                     finish();
                 }
-                break;
-            default:
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
     }
 
     @Override

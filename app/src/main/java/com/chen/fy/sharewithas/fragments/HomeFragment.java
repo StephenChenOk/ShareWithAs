@@ -84,16 +84,12 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
     private ArrayList<ShareInfo> mShareInfos;
 
-    //图片
-    private TypedArray mImages;
     public static ArrayList<ImageView> imageList;
     //图片标题
     private String[] mTitles;
 
     //上一个被选中图片的位置
     private int mPrePosition = 0;
-    //判断当前页面是否是滑动状态,解决当页面手动滑动后不能继续进行自动滑动
-    private boolean mIsScroll = false;
 
     //自动轮播
     public static final int BANNER_CODE = 0;
@@ -219,7 +215,8 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
     private void initViewPager() {
         //1 获取图片和图片标题资源
-        mImages = getResources().obtainTypedArray(R.array.images);
+        //图片
+        TypedArray mImages = getResources().obtainTypedArray(R.array.images);
         mTitles = getResources().getStringArray(R.array.titles);
         imageList = new ArrayList<>();
         //2 设置顶部的自动轮转图
@@ -348,11 +345,9 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     public void onPageScrollStateChanged(int i) {
         //判断当前页面是否是滑动状态,解决当页面手动滑动后不能继续进行自动滑动
         if (i == ViewPager.SCROLL_STATE_DRAGGING) {   //拖拽状态
-            mIsScroll = true;
         } else if (i == ViewPager.SCROLL_STATE_SETTLING) {  //滑动状态
 
         } else if (i == ViewPager.SCROLL_STATE_IDLE) {   //静止状态
-            mIsScroll = false;
             Log.d("chenchen", "Scroll");
             mHandler.removeMessages(BANNER_CODE);
             mHandler.sendEmptyMessageDelayed(BANNER_CODE, 3000);

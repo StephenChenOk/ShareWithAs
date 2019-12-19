@@ -5,53 +5,51 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#eee"
+        android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:gravity="center|bottom"
+            android:padding="5dp"
+            android:text="看一看"
+            android:textColor="#555"
+            android:textSize="18sp" />
 
-        <LinearLayout
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/refreshLayout_found"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#eee"
-            android:orientation="vertical">
+            app:srlEnableFooterFollowWhenLoadFinished="true"
+            app:srlEnableScrollContentWhenLoaded="true">
 
-            <TextView
+            <com.scwang.smartrefresh.layout.header.ClassicsHeader
                 android:layout_width="match_parent"
-                android:layout_height="65dp"
-                android:gravity="center|bottom"
-                android:padding="5dp"
-                android:text="看一看"
-                android:textColor="#555"
-                android:textSize="18sp" />
+                android:layout_height="wrap_content"
+                app:srlAccentColor="#aaa"
+                app:srlDrawableProgress="@drawable/animation_loading_rotate"
+                app:srlDrawableProgressSize="25dp"
+                app:srlPrimaryColor="@color/colorBackgroundDark" />
 
-            <com.scwang.smartrefresh.layout.SmartRefreshLayout
-                android:id="@+id/refreshLayout_found"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_news"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:srlEnableFooterFollowWhenLoadFinished="true"
-                app:srlEnableScrollContentWhenLoaded="true">
+                android:background="#FFFFFF "
+                android:fitsSystemWindows="true"
+                android:overScrollMode="never" />
 
-                <com.scwang.smartrefresh.layout.header.ClassicsHeader
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:srlAccentColor="#aaa"
-                    app:srlDrawableProgress="@drawable/animation_loading_rotate"
-                    app:srlDrawableProgressSize="25dp"
-                    app:srlPrimaryColor="@color/colorBackgroundDark" />
+            <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srlClassicsSpinnerStyle="Translate" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_news"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#FFFFFF "
-                    android:fitsSystemWindows="true"
-                    android:overScrollMode="never" />
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-                <com.scwang.smartrefresh.layout.footer.ClassicsFooter
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:srlClassicsSpinnerStyle="Translate" />
-
-            </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-
-        </LinearLayout>
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
