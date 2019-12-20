@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -34,6 +33,7 @@ import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.activities.PublishActivity;
 import com.chen.fy.sharewithas.adapters.MultipleStatesAdapter;
 import com.chen.fy.sharewithas.adapters.MyViewPagerAdapter;
+import com.chen.fy.sharewithas.asynctasks.GetShareInfoTask;
 import com.chen.fy.sharewithas.beans.ShareInfo;
 
 import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;
@@ -54,9 +54,10 @@ import org.devio.takephoto.model.CropOptions;
 import org.devio.takephoto.model.TResult;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Random;
+
+import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
@@ -96,7 +97,9 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     //刷新
     private final int REFRESH_CODE = 1;
     //更新UI
-    private final int UPDATE_UI_CODE = 2;
+    public static final int UPDATE_UI_CODE = 2;
+    //发表动态
+    private final int REQUEST_PUBLISH_CODE = 3;
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -194,6 +197,14 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         //设置点击事件
         tvSearch.setOnClickListener(this);
         ivTakePhotoLogo.setOnClickListener(this);
+        ivTakePhotoLogo.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent = new Intent(getActivity(),PublishActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
 
         if (isFirstEnter) {
             isFirstEnter = false;
@@ -261,48 +272,14 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             mShareInfos.clear();
         }
 
-        refreshData();
+        getShareInfo();
 
         mHandler.sendEmptyMessage(UPDATE_UI_CODE);
     }
 
-    private void refreshData() {
-        Log.d("HomeFragment.Log", "refreshData");
-        Random random = new Random();
-        Bitmap bitmap;
-        ArrayList<Object> list;
-        for (int i = 0; i < 9; i++) {
-            switch (random.nextInt(2)) {
-                case 0:
-                    ShareInfo shareInfo1 = new ShareInfo();
-                    shareInfo1.setType(1);
-                    shareInfo1.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
-                    shareInfo1.setName("文字");
-                    shareInfo1.setContent("文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局，文字布局");
-                    mShareInfos.add(shareInfo1);
-                    break;
-                case 1:
-                    list = new ArrayList<>();
-                    ShareInfo shareInfo2 = new ShareInfo();
-                    shareInfo2.setType(2);
-                    shareInfo2.setHeadIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img11));
-                    shareInfo2.setName("多图片");
-                    shareInfo2.setContent("多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局，多图片布局");
-                    for (int j = 0; j < random.nextInt(8) + 1; j++) {
-                        if (j % 2 == 0) {
-                            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img);
-                        } else {
-                            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img11);
-                        }
-                        list.add(bitmap);
-                    }
-                    shareInfo2.setPhotos(list);
-                    Log.d("HomeFragment.Log", "Size:" + list.size());
-                    mShareInfos.add(shareInfo2);
-                    break;
-            }
-        }
-
+    private void getShareInfo() {
+        GetShareInfoTask getShareInfoTask = new GetShareInfoTask(getActivity(), mHandler, mShareInfos);
+        getShareInfoTask.execute();
     }
 
     /**
@@ -338,7 +315,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
      * 静止-滚动
      * 滚动-静止
      * 静止-拖拽
-     *
      * @param i 当前状态
      */
     @Override
@@ -348,7 +324,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         } else if (i == ViewPager.SCROLL_STATE_SETTLING) {  //滑动状态
 
         } else if (i == ViewPager.SCROLL_STATE_IDLE) {   //静止状态
-            Log.d("chenchen", "Scroll");
             mHandler.removeMessages(BANNER_CODE);
             mHandler.sendEmptyMessageDelayed(BANNER_CODE, 3000);
         }
@@ -433,57 +408,6 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
             case R.id.search_home:
                 break;
         }
-    }
-
-    /**
-     * 防止内存泄漏
-     * 1:定义为静态内部类
-     * 2:持有外部弱引用
-     */
-    private class GetDataTask extends AsyncTask<String, Integer, String> {
-
-        //获取外部弱引用
-        private WeakReference<MainActivity> activityWeakReference;
-
-        GetDataTask(MainActivity mainActivity) {
-            activityWeakReference = new WeakReference<>(mainActivity);
-        }
-
-        /**
-         * 后台任务开始之前调用，通常用来初始化界面操作
-         */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        /**
-         * 执行后台耗时操作，已在子线程中执行
-         *
-         * @return 对结果进行返回
-         */
-        @Override
-        protected String doInBackground(String... params) {
-            return "";
-        }
-
-        /**
-         * 当后台任务执行完毕时调用
-         *
-         * @param result 后台执行任务的返回值
-         */
-        @Override
-        protected void onPostExecute(String result) {
-            //判断外部活动对象是否已经被销毁
-            MainActivity activity = activityWeakReference.get();
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-        }
-    }
-
-    private void toast(String text) {
-        Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
     }
 
     /**

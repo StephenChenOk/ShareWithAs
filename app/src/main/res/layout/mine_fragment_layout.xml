@@ -40,7 +40,7 @@
                     android:layout_marginTop="80dp"
                     android:text="登入/注册"
                     android:textColor="#FFFFFF"
-                    android:textSize="20dp" />
+                    android:textSize="21sp" />
 
                 <TextView
                     android:id="@+id/info_text_mine"

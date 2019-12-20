@@ -5,7 +5,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.beans.News;
-import com.chen.fy.sharewithas.interfaces.OnItemClickListener;
+import com.chen.fy.sharewithas.interfaces.OnNewsItemClickListener;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private int mResourceId;
     private List<News> mNewsList;
 
-    private OnItemClickListener onItemClickListener;
+    private OnNewsItemClickListener onItemClickListener;
 
     public NewsAdapter(Context context, int resourceId) {
         this.mContext = context;
@@ -36,7 +35,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         this.mNewsList = newsList;
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+    public void setOnItemClickListener(OnNewsItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 

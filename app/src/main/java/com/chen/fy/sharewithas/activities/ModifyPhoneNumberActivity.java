@@ -37,6 +37,8 @@ public class ModifyPhoneNumberActivity extends AppCompatActivity implements View
     private static final String TAG = "PhoneNumberActivity";
     private EditText etPhoneNumber;
 
+    private boolean isClicked = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +64,12 @@ public class ModifyPhoneNumberActivity extends AppCompatActivity implements View
                 finish();
                 break;
             case R.id.tv_save_phone:
-                savePhoneNumber();
+                if (!isClicked) {
+                    savePhoneNumber();
+                    isClicked = true;
+                } else {
+                    Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -82,7 +89,7 @@ public class ModifyPhoneNumberActivity extends AppCompatActivity implements View
         String phoneNumber_old = sharedPreferences.getString("phoneNumber", "");
         if (phoneNumber.equals(phoneNumber_old)) {   //只有真正更好时才放松请求
             Toast.makeText(this, "电话号码已相同", Toast.LENGTH_SHORT).show();
-        }else {
+        } else {
             updateServerData(sharedPreferences, phoneNumber);
         }
 

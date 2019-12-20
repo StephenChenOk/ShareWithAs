@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
 
@@ -96,7 +97,14 @@ public class PicturesGridViewAdapter extends BaseAdapter {
             params.height = (int) (whTemp / 3);
         }
         viewHolder.ivPicture.setLayoutParams(params);
-        Glide.with(mContext).load(mPictures.get(position)).into(viewHolder.ivPicture);
+
+        RequestOptions options = new RequestOptions()
+                .placeholder(R.drawable.img)//图片加载出来前，显示的图片
+                .fallback(R.drawable.img)  //url为空的时候,显示的图片
+                .error(R.drawable.img);//图片加载失败后，显示的图片
+
+        Log.d("RequestOptions", String.valueOf(mPictures.get(position)));
+        Glide.with(mContext).load(mPictures.get(position)).apply(options).into(viewHolder.ivPicture);
 
         return view;
     }

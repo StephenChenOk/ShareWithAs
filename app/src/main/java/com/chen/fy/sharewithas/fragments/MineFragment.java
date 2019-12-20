@@ -2,13 +2,16 @@ package com.chen.fy.sharewithas.fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,9 @@ import com.chen.fy.sharewithas.activities.MyInfoActivity;
 import com.chen.fy.sharewithas.constants.Constants;
 import com.chen.fy.sharewithas.utils.UiUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
@@ -32,6 +38,8 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private final int LOGIN_REQUEST_CODE = 1;
     private final int MY_INFO_REQUEST_CODE = 2;
 
+    public static final int RESULT_OUT_LOGIN = 3;
+
     private CircleImageView ivHeadIcon;
     private TextView tvUsername;
     private TextView tvUserInfo;
@@ -39,6 +47,8 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private View mView;
 
     private int mId = -1;
+
+    private boolean isFirst = true;
 
     @Nullable
     @Override
@@ -97,10 +107,14 @@ public class MineFragment extends Fragment implements View.OnClickListener {
      */
     private void initLoginState() {
         if (getContext() != null) {
-            SharedPreferences preferences = getContext().getSharedPreferences("userInfo", MODE_PRIVATE);
-            mId = preferences.getInt("id", -1);
+            String spName = getResources().getString(R.string.userInfo_sp_name);
+            SharedPreferences preferences = getContext().getSharedPreferences(spName, MODE_PRIVATE);
+
+            String idKey = getResources().getString(R.string.id_sp_key);
+            mId = preferences.getInt(idKey, -1);
             if (mId != -1) {  //已经登录
-                String userName = preferences.getString("userName", "后起之秀");
+                String userNameKey = getResources().getString(R.string.userName_sp_key);
+                String userName = preferences.getString(userNameKey, "后起之秀");
 
                 tvUsername.setText(userName);
                 tvUserInfo.setText("个人信息>");
@@ -110,15 +124,33 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 tvUserInfo.setText("我们的故事从拥有一个账号开始");
             }
 
-            String headUrl = preferences.getString("headUrl", Constants.LOGIN_SERVER_URL + "/asserts/headImg/default_head.jpg");
-
-            RequestOptions options = new RequestOptions()
-                    .placeholder(R.drawable.img)//图片加载出来前，显示的图片
-                    .fallback(R.drawable.img)  //url为空的时候,显示的图片
-                    .error(R.drawable.img);    //图片加载失败后，显示的图片
-
-            Glide.with(getContext()).load(headUrl).apply(options).into(ivHeadIcon);
+            if (isFirst) {
+                setHeadIcon(preferences);
+                isFirst = false;
+            }
         }
+    }
+
+    private void setHeadIcon(SharedPreferences preferences) {
+        String headUrlKey = getResources().getString(R.string.headUrl_sp_key);
+        String headUrl = preferences.getString(headUrlKey, "http://xiongtianmin.online/album/asserts/headImg/default_head.jpg");
+
+        String mImageName = "headIcon" + ".jpg";
+        File file = new File(getActivity().getExternalFilesDir(null), mImageName);
+        Uri uri = Uri.fromFile(file);
+        Drawable preImg = null;
+        try {
+            preImg = Drawable.createFromStream(getActivity().getContentResolver().openInputStream(uri), "headIcon.jpg");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        RequestOptions options = new RequestOptions()
+                .placeholder(preImg)//图片加载出来前，显示的图片
+                .fallback(R.drawable.img)  //url为空的时候,显示的图片
+                .error(R.drawable.img);    //图片加载失败后，显示的图片
+
+        Glide.with(getContext()).load(headUrl).apply(options).into(ivHeadIcon);
     }
 
     @Override
@@ -154,13 +186,26 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
             case LOGIN_REQUEST_CODE:
-                if(resultCode == RESULT_OK) {
-                    Log.d("chenyisheng", "login");
+                if (resultCode == RESULT_OK) {
+                    String spName = getResources().getString(R.string.userInfo_sp_name);
+                    SharedPreferences preferences = getContext().getSharedPreferences(spName, MODE_PRIVATE);
+                    setHeadIcon(preferences);
                 }
                 break;
             case MY_INFO_REQUEST_CODE:
-                if(resultCode == RESULT_OK) {
-                    Log.d("chenyisheng","myInfo");
+                if (resultCode == RESULT_OK) {
+                    boolean isChange = data.getBooleanExtra(getResources().getString(R.string.head_icon_is_change), false);
+                    if (isChange) {
+                        //如果头像已经发生改变，则从本地直接获取头像，并更改头像
+                        String headIconPath = data.getStringExtra(getResources().getString(R.string.head_icon_path));
+                        Bitmap bitmap = BitmapFactory.decodeFile(headIconPath);
+                        ivHeadIcon.setImageBitmap(bitmap);
+                    }
+                }
+                if (resultCode == RESULT_OUT_LOGIN) {  //退出账号
+                    if (getContext() != null) {
+                        Glide.with(getContext()).load(R.drawable.img).into(ivHeadIcon);
+                    }
                 }
                 break;
         }

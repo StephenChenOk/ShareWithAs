@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.adapters.PublishGridViewAdapter;
+import com.chen.fy.sharewithas.asynctasks.PostShareInfoTask;
+import com.chen.fy.sharewithas.beans.ShareInfo;
 import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;
 import com.chen.fy.sharewithas.utils.UiUtils;
 import com.lxj.xpopup.XPopup;
@@ -58,8 +60,6 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
      * 拍照控件
      */
     private TakePhoto mTakePhoto;
-    private InvokeParam mInvokeParam;
-
     /**
      * 图片剪切以及图片地址
      */
@@ -116,16 +116,15 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
         if (adapter == null) {
             adapter = new PublishGridViewAdapter(this);
         }
-        int count;
         if (getIntent() != null) {
-            count = getIntent().getIntExtra("ImagesSize", 0);
-            for (int i = 0; i < count; i++) {
+            //发表的图片数量
+            int imageCounts = getIntent().getIntExtra("ImagesSize", 0);
+            for (int i = 0; i < imageCounts; i++) {
                 mUriList.add(getIntent().getStringExtra("ImagesURI" + i));
                 mExpandList.add(getIntent().getStringExtra("ImagesURI" + i));
 
-                Log.d("chenyisheng1", getIntent().getStringExtra("ImagesURI" + i));
             }
-            if (count != 9) {
+            if (imageCounts != 0 && imageCounts != 9) {
                 mUriList.add(String.valueOf(R.drawable.ic_add_black_72dp));
             } else {
                 adapter.setAdd(false);
@@ -172,7 +171,8 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
                 finish();
                 break;
             case R.id.btn_publish:
-                toast("发表");
+                String content = etContent.getText().toString();
+                postShareInfo(content);
                 break;
             case R.id.ll_location_publish_box:
                 toast("所在位置");
@@ -184,6 +184,14 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
                 toast("谁可以看");
                 break;
         }
+    }
+
+    /**
+     * 发表动态
+     */
+    private void postShareInfo(String content) {
+        PostShareInfoTask postShareInfoTask = new PostShareInfoTask(this, mExpandList);
+        postShareInfoTask.execute(content);
     }
 
     private void toast(String text) {
@@ -255,7 +263,6 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
         if (!result.getImages().isEmpty()) {
             mUriList.remove(mUriList.size() - 1);
             for (int i = 0; i < result.getImages().size(); i++) {
-                Log.d("PublishActivity.Log", "1:" + result.getImages().get(i).getCompressPath());
                 mUriList.add(result.getImages().get(i).getCompressPath());
                 mExpandList.add(result.getImages().get(i).getCompressPath());
             }

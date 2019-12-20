@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">ShareWithAs</string>
+
+    <!--userInfo_sp_file-->
+    <string name="userInfo_sp_name">userInfo</string>
+    <string name="headUrl_sp_key">headUrl</string>
+    <string name="id_sp_key">id</string>
+    <string name="userName_sp_key">userName</string>
+    <string name="account_sp_key">account</string>
+    <string name="password_sp_key">password</string>
+    <string name="phoneNumber_sp_key">phoneNumber</string>
+
+    <string name="head_icon_is_change">isChange</string>
+    <string name="head_icon_path">head_icon_path</string>
+    <string name="msg_key">msg</string>
 </resources>

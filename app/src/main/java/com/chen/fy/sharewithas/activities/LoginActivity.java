@@ -117,6 +117,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)   //需要的API等级
     private void parseJSON(Response response) {
+        String idKey = getResources().getString(R.string.id_sp_key);
+        String accountKey = getResources().getString(R.string.account_sp_key);
+        String passwordKey = getResources().getString(R.string.password_sp_key);
+        String userNameKey = getResources().getString(R.string.userName_sp_key);
+        String headUrlKey = getResources().getString(R.string.headUrl_sp_key);
+        String phoneNumberKey = getResources().getString(R.string.phoneNumber_sp_key);
+
         JsonParser parser = new JsonParser();//Json解析
         try {
             //1 获取JsonObject对象
@@ -124,33 +131,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.d(TAG, jsonObject.toString());
 
             //2 分别取出数据
-            int id = Integer.parseInt(jsonObject.get("id").toString());
+            int id = Integer.parseInt(jsonObject.get(idKey).toString());
 
-            String account1 = jsonObject.get("account").toString();
-            String account = account1.substring(1,account1.length()-1);
+            String account1 = jsonObject.get(accountKey).toString();
+            String account = account1.substring(1, account1.length() - 1);
 
-            String password1 = jsonObject.get("password").toString();
-            String password = password1.substring(1,password1.length()-1);
+            String password1 = jsonObject.get(passwordKey).toString();
+            String password = password1.substring(1, password1.length() - 1);
 
-            String userName1 = jsonObject.get("userName").toString();
-            String userName = userName1.substring(1,userName1.length()-1);
+            String userName1 = jsonObject.get(userNameKey).toString();
+            String userName = userName1.substring(1, userName1.length() - 1);
 
-            String headUrl1 = jsonObject.get("headUrl").toString();
-            String headUrl = headUrl1.substring(1,headUrl1.length()-1);
+            String headUrl1 = jsonObject.get(headUrlKey).toString();
+            String headUrl = headUrl1.substring(1, headUrl1.length() - 1);
 
-            String phoneNumber1 = jsonObject.get("phoneNumber").toString();
-            String phoneNumber = phoneNumber1.substring(1,phoneNumber1.length()-1);
-
-            Log.d("chenyisheng", id + "," + account + "," + password + "," + userName + "," + headUrl + "," + phoneNumber);
+            String phoneNumber1 = jsonObject.get(phoneNumberKey).toString();
+            String phoneNumber = phoneNumber1.substring(1, phoneNumber1.length() - 1);
 
             //3 保存数据
             SharedPreferences.Editor editorUserInfo = getSharedPreferences("userInfo", MODE_PRIVATE).edit();
-            editorUserInfo.putInt("id", id);
-            editorUserInfo.putString("account", account);
-            editorUserInfo.putString("password", password);
-            editorUserInfo.putString("userName", userName);
-            editorUserInfo.putString("headUrl", headUrl);
-            editorUserInfo.putString("phoneNumber", phoneNumber);
+            editorUserInfo.putInt(idKey, id);
+            editorUserInfo.putString(accountKey, account);
+            editorUserInfo.putString(passwordKey, password);
+            editorUserInfo.putString(userNameKey, userName);
+            editorUserInfo.putString(headUrlKey, "http://"+headUrl);
+            editorUserInfo.putString(phoneNumberKey, phoneNumber);
             editorUserInfo.apply();
             runOnUiThread(new Runnable() {
                 @Override

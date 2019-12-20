@@ -37,6 +37,8 @@ public class ModifyUsernameActivity extends AppCompatActivity implements View.On
     private static final String TAG = "UsernameActivity";
     private EditText etUsername;
 
+    private boolean isClicked = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +64,12 @@ public class ModifyUsernameActivity extends AppCompatActivity implements View.On
                 finish();
                 break;
             case R.id.tv_save_username:
-                saveUsername();
+                if (!isClicked) {
+                    saveUsername();
+                    isClicked = true;
+                } else {
+                    Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -82,7 +89,7 @@ public class ModifyUsernameActivity extends AppCompatActivity implements View.On
         String userName_old = sharedPreferences.getString("userName", "");
         if (userName.equals(userName_old)) {   //只有真正更好时才放松请求
             Toast.makeText(this, "昵称已相同", Toast.LENGTH_SHORT).show();
-        }else {
+        } else {
             updateServerData(sharedPreferences, userName);
         }
 

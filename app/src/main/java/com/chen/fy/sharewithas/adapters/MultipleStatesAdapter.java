@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ import com.chen.fy.sharewithas.beans.ShareInfo;
 import com.chen.fy.sharewithas.interfaces.OnMoreOptionClickListener;
 import com.chen.fy.sharewithas.interfaces.OnPicturesItemClickListener;
 import com.chen.fy.sharewithas.interfaces.OnUserDetailsClickListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,17 +118,17 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     /**
      * 设置点击事件
      */
-    private void onClick(ImageView ivHeadIcon, TextView tvName, RelativeLayout rlMoreOptionBox, final int position) {
+    private void onClick(ImageView ivHeadIcon, TextView tvName, RelativeLayout rlMoreOptionBox, final ShareInfo shareInfo, final int position) {
         ivHeadIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mUserDetailsClickListener.onItemClick(position);
+                mUserDetailsClickListener.onItemClick(shareInfo, position);
             }
         });
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mUserDetailsClickListener.onItemClick(position);
+                mUserDetailsClickListener.onItemClick(shareInfo, position);
             }
         });
         rlMoreOptionBox.setOnClickListener(new View.OnClickListener() {
@@ -141,20 +144,22 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      */
     private void setTextItemView(@NonNull TextHolder viewHolder, ShareInfo shareInfo, final int position) {
         //Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
-        setHeadIcon(viewHolder.ivHeadIcon);
-        viewHolder.tvName.setText(shareInfo.getName());
+        setHeadIcon(shareInfo, viewHolder.ivHeadIcon);
+        viewHolder.tvName.setText(shareInfo.getUserName());
         viewHolder.tvContent.setText(shareInfo.getContent());
-        onClick(viewHolder.ivHeadIcon, viewHolder.tvName, viewHolder.rlMoreOptionBox, position);
+        viewHolder.tvShareDate.setText(shareInfo.getShareDate());
+        onClick(viewHolder.ivHeadIcon, viewHolder.tvName, viewHolder.rlMoreOptionBox, shareInfo, position);
     }
 
     /**
      * 多图片子布局
      */
     private void setMultiplePicturesItemView(@NonNull MultiplePictureHolder viewHolder, final ShareInfo shareInfo, final int position) {
-       // Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
-        setHeadIcon(viewHolder.ivHeadIcon);
-        viewHolder.tvName.setText(shareInfo.getName());
+        // Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
+        setHeadIcon(shareInfo, viewHolder.ivHeadIcon);
+        viewHolder.tvName.setText(shareInfo.getUserName());
         viewHolder.tvContent.setText(shareInfo.getContent());
+        viewHolder.tvShareDate.setText(shareInfo.getShareDate());
         if (shareInfo.getPhotos().size() == 2 || shareInfo.getPhotos().size() == 4) {
             ViewGroup.LayoutParams params = viewHolder.rlBox.getLayoutParams();
             params.width = (int) (MainActivity.width / 1.9);
@@ -177,16 +182,19 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 mItemClickListener.onPicturesItemClick(relativeLayout, position, shareInfo.getPhotos());
             }
         });
-        onClick(viewHolder.ivHeadIcon, viewHolder.tvName, viewHolder.rlMoreOptionBox, position);
+        onClick(viewHolder.ivHeadIcon, viewHolder.tvName, viewHolder.rlMoreOptionBox, shareInfo, position);
     }
 
-    private void setHeadIcon(ImageView ivHeadIcon){
+    private void setHeadIcon(ShareInfo shareInfo, ImageView ivHeadIcon) {
         //设置图片圆角角度
-        RoundedCorners roundedCorners= new RoundedCorners(10);
+        RoundedCorners roundedCorners = new RoundedCorners(10);
         //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
-        RequestOptions options=RequestOptions.bitmapTransform(roundedCorners);
-
-        Glide.with(mContext).load(R.drawable.img).apply(options).into(ivHeadIcon);
+        RequestOptions options = RequestOptions
+                .bitmapTransform(roundedCorners)
+                .placeholder(R.drawable.img)//图片加载出来前，显示的图片
+                .fallback(R.drawable.img)  //url为空的时候,显示的图片
+                .error(R.drawable.img);    //图片加载失败后，显示的图片
+        Glide.with(mContext).load(shareInfo.getHeadUrl()).apply(options).into(ivHeadIcon);
     }
 
     @Override
@@ -199,6 +207,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         private ImageView ivHeadIcon;
         private TextView tvName;
         private TextView tvContent;
+        private TextView tvShareDate;
         private RelativeLayout rlMoreOptionBox;
 
         TextHolder(@NonNull View itemView) {
@@ -207,6 +216,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ivHeadIcon = itemView.findViewById(R.id.head_icon_item);
             tvName = itemView.findViewById(R.id.tv_name_item);
             tvContent = itemView.findViewById(R.id.tv_content_item);
+            tvShareDate = itemView.findViewById(R.id.tv_time_bottom_item);
             rlMoreOptionBox = itemView.findViewById(R.id.rl_more_option_box);
         }
     }
@@ -218,6 +228,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         private TextView tvContent;
         private RelativeLayout rlBox;
         private GridView gvPictures;
+        private TextView tvShareDate;
         private RelativeLayout rlMoreOptionBox;
 
         MultiplePictureHolder(@NonNull View itemView) {
@@ -228,6 +239,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             tvContent = itemView.findViewById(R.id.tv_content_item);
             rlBox = itemView.findViewById(R.id.box_gv_pictures);
             gvPictures = itemView.findViewById(R.id.gv_box_multiple_pictures);
+            tvShareDate = itemView.findViewById(R.id.tv_time_bottom_item);
             rlMoreOptionBox = itemView.findViewById(R.id.rl_more_option_box);
         }
     }

@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.chen.fy.sharewithas.R;
-import com.chen.fy.sharewithas.beans.User;
 import com.chen.fy.sharewithas.constants.Constants;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -23,8 +22,6 @@ import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -90,8 +87,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 requestRegister();
                 break;
             case R.id.iv_return_register:
-                finish();
-                break;
             case R.id.tv_return:
                 finish();
                 break;
@@ -102,6 +97,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * 请求注册
      */
     private void requestRegister() {
+        String accountKey = getResources().getString(R.string.account_sp_key);
+        String passwordKey = getResources().getString(R.string.password_sp_key);
+        String userNameKey = getResources().getString(R.string.userName_sp_key);
+        String phoneNumberKey = getResources().getString(R.string.phoneNumber_sp_key);
+
         String username = etUsername.getText().toString();
         String password1 = etPwd.getText().toString();
         String password2 = etPwd2.getText().toString();
@@ -115,10 +115,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("account", username);
-        map.put("password", password1);
-        map.put("userName", "后起之秀");
-        map.put("phoneNumber", "");
+        map.put(accountKey, username);
+        map.put(passwordKey, password1);
+        map.put(userNameKey, "后起之秀");
+        map.put(phoneNumberKey, "18074845457");
 
         final Gson gson = new Gson();
         String postData = gson.toJson(map);
@@ -149,7 +149,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(RegisterActivity.this, jsonObject.get("msg").toString(), Toast.LENGTH_SHORT).show();
+                        String msgKey = getResources().getString(R.string.msg_key);
+                        Toast.makeText(RegisterActivity.this, jsonObject.get(msgKey).toString(), Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 });
             }

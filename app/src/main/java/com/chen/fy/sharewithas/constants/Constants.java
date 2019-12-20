@@ -25,5 +25,8 @@ public class Constants {
      * 头像URL
      */
     public static final String HEAD_ICON_SERVER_URL = "http://xiongtianmin.online/album/user/uploadHead";
-
+    /**
+     * 获取,发表动态URL
+     */
+    public static final String SHARE_INFO_URL = "http://xiongtianmin.online/album/moment";
 }

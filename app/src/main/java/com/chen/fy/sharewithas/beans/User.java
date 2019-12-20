@@ -2,26 +2,12 @@ package com.chen.fy.sharewithas.beans;
 
 public class User {
 
-    /**
-     * 用户唯一标识
-     */
     private int id;
-    /**
-     * 登陆账号
-     */
-    private String username;
-    /**
-     * 昵称
-     */
-    private String nickname;
-    /**
-     * 密码
-     */
+    private String account;
     private String password;
-    /**
-     * 手机号码
-     */
-    private String phone;
+    private String userName;
+    private String headUrl;
+    private String phoneNumber;
 
     public int getId() {
         return id;
@@ -31,20 +17,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getAccount() {
+        return account;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setAccount(String account) {
+        this.account = account;
     }
 
     public String getPassword() {
@@ -55,12 +33,39 @@ public class User {
         this.password = password;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
+    public String getHeadUrl() {
+        return headUrl;
+    }
+
+    public void setHeadUrl(String headUrl) {
+        this.headUrl = headUrl;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", account='" + account + '\'' +
+                ", password='" + password + '\'' +
+                ", userName='" + userName + '\'' +
+                ", headUrl='" + headUrl + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                '}';
+    }
 }

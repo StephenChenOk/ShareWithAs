@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.lxj.xpopup.XPopup;
 public class UserDetailsActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView ivHeadIcon;
+    private TextView tvUsername;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,13 +29,14 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.user_details_layout);
         UiUtils.changeStatusBarTextImgColor(this, true);
         initView();
-        setHeadIcon();
+        initData();
     }
 
     private void initView() {
         ImageView ivReturn = findViewById(R.id.iv_return_user_detail);
         ImageView ivMoreOption = findViewById(R.id.iv_more_option_user_detail);
         ivHeadIcon = findViewById(R.id.iv_headIcon_user_detail);
+        tvUsername = findViewById(R.id.tv_username_user_details);
         RelativeLayout rlRemarkBox = findViewById(R.id.rl_remark_box);
         RelativeLayout rlAuthorityBox = findViewById(R.id.rl_authority_box);
         RelativeLayout rlShareInfoBox = findViewById(R.id.rl_share_info_box);
@@ -50,13 +53,23 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
         llChartBox.setOnClickListener(this);
     }
 
-    private void setHeadIcon(){
-        //设置图片圆角角度
-        RoundedCorners roundedCorners= new RoundedCorners(15);
-        //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
-        RequestOptions options=RequestOptions.bitmapTransform(roundedCorners);
+    private void initData() {
+        String userName = null;
+        String headUrl = null;
+        if (getIntent() != null) {
+            userName = getIntent().getStringExtra("userName");
+            headUrl = getIntent().getStringExtra("headUrl");
+        }
 
-        Glide.with(this).load(R.drawable.img).apply(options).into(ivHeadIcon);
+        tvUsername.setText(userName);
+        //设置图片圆角角度
+        RoundedCorners roundedCorners = new RoundedCorners(15);
+        //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
+        RequestOptions options = RequestOptions
+                .bitmapTransform(roundedCorners)
+                .placeholder(R.drawable.img);
+
+        Glide.with(this).load(headUrl).apply(options).into(ivHeadIcon);
     }
 
     @Override
