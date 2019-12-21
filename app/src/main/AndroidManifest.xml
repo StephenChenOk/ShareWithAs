@@ -42,6 +42,8 @@
             android:theme="@style/MyTheme"/>
         <activity android:name=".activities.ModifyPhoneNumberActivity"
             android:theme="@style/MyTheme"/>
+        <activity android:name=".activities.SearchActivity"
+            android:theme="@style/MyTheme"/>
     </application>
 
 </manifest>

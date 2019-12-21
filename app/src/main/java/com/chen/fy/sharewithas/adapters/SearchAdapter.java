@@ -24,19 +24,23 @@ import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.fragments.HomeFragment;
 import com.chen.fy.sharewithas.interfaces.OnMoreOptionClickListener;
 import com.chen.fy.sharewithas.interfaces.OnPicturesItemClickListener;
 import com.chen.fy.sharewithas.interfaces.OnUserDetailsClickListener;
+import com.chen.fy.sharewithas.utils.SearchUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private List<ShareInfo> mDatas;
     private final int ONE_ITEM = 1;
     private final int TWO_ITEM = 2;
+
+    private String searchString;
 
     /**
      * GridView中图片的点击事件
@@ -52,7 +56,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      */
     private OnUserDetailsClickListener mUserDetailsClickListener;
 
-    public MultipleStatesAdapter(Context context) {
+    public SearchAdapter(Context context) {
         this.mContext = context;
     }
 
@@ -70,6 +74,10 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public void setUserDetailsClickListener(OnUserDetailsClickListener onUserDetailsClickListener) {
         this.mUserDetailsClickListener = onUserDetailsClickListener;
+    }
+
+    public void setSearchString(String searchString) {
+        this.searchString = searchString;
     }
 
     /**
@@ -135,7 +143,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         rlMoreOptionBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMoreOptionClickListener.onclick(position, v, shareInfo, isLikes);
+                //mMoreOptionClickListener.onclick(position, v, shareInfo, isLikes);
             }
         });
     }
@@ -146,8 +154,19 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private void setTextItemView(@NonNull TextHolder viewHolder, ShareInfo shareInfo, final int position) {
         //Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
         setHeadIcon(shareInfo, viewHolder.ivHeadIcon);
-        viewHolder.tvName.setText(shareInfo.getUserName());
-        viewHolder.tvContent.setText(shareInfo.getContent());
+
+        //设置搜索高亮
+        if (shareInfo.getUserName().toLowerCase().contains(searchString.toLowerCase())) {
+            viewHolder.tvName.setText(SearchUtils.highLightText(shareInfo.getUserName(), searchString));
+        } else {
+            viewHolder.tvName.setText(shareInfo.getUserName());
+        }
+        if (shareInfo.getContent().toLowerCase().contains(searchString.toLowerCase())) {
+            viewHolder.tvContent.setText(SearchUtils.highLightText(shareInfo.getContent(), searchString));
+        } else {
+            viewHolder.tvContent.setText(shareInfo.getContent());
+        }
+
         viewHolder.tvShareDate.setText(shareInfo.getShareDate());
         //点赞
         boolean isLikes = setDoLike(shareInfo, viewHolder.llLikeBox, viewHolder.tvLikesNumber);
@@ -174,12 +193,12 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         //2 获取当前用户id
         String sp_user_info = mContext.getResources().getString(R.string.userInfo_sp_name);
-        String userNameKey = mContext.getResources().getString(R.string.userName_sp_key);
+        String id_sp_key = mContext.getResources().getString(R.string.id_sp_key);
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(sp_user_info, Context.MODE_PRIVATE);
-        String userName = sharedPreferences.getString(userNameKey, "");
+        int userId = sharedPreferences.getInt(id_sp_key, -1);
 
         //3 判断是否已经进行登录
-        if (userName.isEmpty()) {
+        if (userId == -1) {
             return false;
         }
 
@@ -189,7 +208,7 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if (str == null || str.isEmpty()) {
                 continue;
             }
-            if (str.equals(userName)) {
+            if (str.equals(String.valueOf(userId))) {
                 Log.d("点赞", "用户已经进行过点赞");
                 return true;
             }
@@ -203,8 +222,19 @@ public class MultipleStatesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private void setMultiplePicturesItemView(@NonNull MultiplePictureHolder viewHolder, final ShareInfo shareInfo, final int position) {
         // Glide.with(mContext).load(shareInfo.getHeadIcon()).into(viewHolder.ivHeadIcon);
         setHeadIcon(shareInfo, viewHolder.ivHeadIcon);
-        viewHolder.tvName.setText(shareInfo.getUserName());
-        viewHolder.tvContent.setText(shareInfo.getContent());
+
+        //设置搜索高亮
+        if (shareInfo.getUserName().toLowerCase().contains(searchString.toLowerCase())) {
+            viewHolder.tvName.setText(SearchUtils.highLightText(shareInfo.getUserName(), searchString));
+        } else {
+            viewHolder.tvName.setText(shareInfo.getUserName());
+        }
+        if (shareInfo.getContent().toLowerCase().contains(searchString.toLowerCase())) {
+            viewHolder.tvContent.setText(SearchUtils.highLightText(shareInfo.getContent(), searchString));
+        } else {
+            viewHolder.tvContent.setText(shareInfo.getContent());
+        }
+
         viewHolder.tvShareDate.setText(shareInfo.getShareDate());
         viewHolder.tvLikesNumber.setText(shareInfo.getLikes());
         if (shareInfo.getPhotos().size() == 2 || shareInfo.getPhotos().size() == 4) {

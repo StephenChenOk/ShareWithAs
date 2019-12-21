@@ -8,4 +8,5 @@
     <color name="item_selected">#EEEEEE</color>
     <color name="colorDivider">#4DAAA9A9</color>
     <color name="colorBackgroundDark">#f2f2f2</color>
+    <color name="RED">#EE2C2C</color>
 </resources>

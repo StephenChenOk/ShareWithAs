@@ -125,6 +125,7 @@ public class PostShareInfoTask extends AsyncTask<String, Integer, String> {
         Toast.makeText(ContextApplication.getContext(),
                 basePublishResponse.getMsg(),
                 Toast.LENGTH_SHORT).show();
+        activity.setResult(Activity.RESULT_OK);
         activity.finish();
     }
 }

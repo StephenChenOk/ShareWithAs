@@ -2,9 +2,8 @@ package com.chen.fy.sharewithas.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,18 +28,18 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
-import com.chen.fy.sharewithas.activities.MainActivity;
 import com.chen.fy.sharewithas.activities.PublishActivity;
+import com.chen.fy.sharewithas.activities.SearchActivity;
 import com.chen.fy.sharewithas.adapters.MultipleStatesAdapter;
 import com.chen.fy.sharewithas.adapters.MyViewPagerAdapter;
 import com.chen.fy.sharewithas.asynctasks.GetShareInfoTask;
 import com.chen.fy.sharewithas.beans.ShareInfo;
 
+import com.chen.fy.sharewithas.interfaces.MyOnMoreOptionClickListener;
 import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;
-import com.chen.fy.sharewithas.interfaces.OnMoreOptionClickListener;
 import com.chen.fy.sharewithas.interfaces.OnUserDetailsClickListener;
+import com.chen.fy.sharewithas.utils.DateComparator;
 import com.chen.fy.sharewithas.utils.UiUtils;
-import com.chen.fy.sharewithas.views.MyAttachPopupView;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -55,9 +54,10 @@ import org.devio.takephoto.model.TResult;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
-import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
@@ -83,7 +83,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
 
     private RecyclerView mRecyclerView;
 
-    private ArrayList<ShareInfo> mShareInfos;
+    public static ArrayList<ShareInfo> mShareInfos;
 
     public static ArrayList<ImageView> imageList;
     //图片标题
@@ -95,11 +95,17 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     //自动轮播
     public static final int BANNER_CODE = 0;
     //刷新
-    private final int REFRESH_CODE = 1;
+    private final int REFRESH_FINISH_CODE = 1;
     //更新UI
     public static final int UPDATE_UI_CODE = 2;
-    //发表动态
-    private final int REQUEST_PUBLISH_CODE = 3;
+    //刷新
+    public static final int REFRESH_CODE = 5;
+    //发表动态请求码
+    private final int REQUEST_PUBLISH_CODE = 11;
+    //判断是否已经登录账号
+    public static boolean isLogin = false;
+    //时间选择器
+    private DateComparator dateComparator;
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -112,21 +118,28 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
                     //自动轮播
                     // mHandler.sendEmptyMessageDelayed(BANNER_CODE, 3000);
                     break;
-                case REFRESH_CODE:
+                case REFRESH_FINISH_CODE:
                     mRefreshLayout.finishRefresh();
+                    break;
+                case REFRESH_CODE:
+                    initDataList();
                     break;
                 case UPDATE_UI_CODE:
                     if (mMultipleStatesAdapter == null) {
+                        dateComparator = new DateComparator();
+
                         mMultipleStatesAdapter = new MultipleStatesAdapter(mContext);
                         mMultipleStatesAdapter.setShareDataList(mShareInfos);
                         mMultipleStatesAdapter.setItemClickListener(new MyOnPicturesItemClickListener());
-                        mMultipleStatesAdapter.setMoreOptionClickListener(new MyOnMoreOptionClickListener());
+                        mMultipleStatesAdapter.setMoreOptionClickListener(new MyOnMoreOptionClickListener(mContext, mHandler));
                         mMultipleStatesAdapter.setUserDetailsClickListener(new OnUserDetailsClickListener(mContext));
                         mRecyclerView.setAdapter(mMultipleStatesAdapter);
                     }
+
+                    Collections.sort(mShareInfos, dateComparator);
                     mMultipleStatesAdapter.notifyDataSetChanged();
 
-                    mHandler.sendEmptyMessageDelayed(REFRESH_CODE, 300);
+                    mHandler.sendEmptyMessageDelayed(REFRESH_FINISH_CODE, 300);
                     break;
             }
         }
@@ -200,7 +213,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
         ivTakePhotoLogo.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent = new Intent(getActivity(),PublishActivity.class);
+                Intent intent = new Intent(getActivity(), PublishActivity.class);
                 startActivity(intent);
                 return true;
             }
@@ -280,6 +293,20 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     private void getShareInfo() {
         GetShareInfoTask getShareInfoTask = new GetShareInfoTask(getActivity(), mHandler, mShareInfos);
         getShareInfoTask.execute();
+
+        initLoginState();
+    }
+
+    private void initLoginState() {
+        String spName = getResources().getString(R.string.userInfo_sp_name);
+        SharedPreferences preferences = getContext().getSharedPreferences(spName, MODE_PRIVATE);
+        String idKey = getResources().getString(R.string.id_sp_key);
+        int id = preferences.getInt(idKey, -1);
+        if (id != -1) {  //已经登录
+            isLogin = true;
+        } else {
+            isLogin = false;
+        }
     }
 
     /**
@@ -315,6 +342,7 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
      * 静止-滚动
      * 滚动-静止
      * 静止-拖拽
+     *
      * @param i 当前状态
      */
     @Override
@@ -384,46 +412,41 @@ public class HomeFragment extends TakePhotoFragment implements ViewPager.OnPageC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.take_photo_logo_home:
-                new XPopup.Builder(getContext())
-//                        .maxWidth(600)
-                        .asCenterList("", new String[]{"拍照", "从相册选择"},
-                                new OnSelectListener() {
-                                    @Override
-                                    public void onSelect(int position, String text) {
-                                        switch (position) {
-                                            case 0:         //拍照
-                                                mTakePhoto.onPickFromCaptureWithCrop(mUri, mCropOptions);
-
-                                                break;
-                                            case 1:         //相册
-                                                //mTakePhoto.onPickFromGalleryWithCrop(mUri, mCropOptions);
-                                                mTakePhoto.onPickMultiple(9);
-                                                //testMatisse();
-                                                break;
-                                        }
-                                    }
-                                })
-                        .show();
+                if (isLogin) {
+                    showSelectPictureBox();
+                } else {
+                    Toast.makeText(mContext, "请先登录再进行此操作", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.search_home:
+                Intent intent = new Intent(mContext, SearchActivity.class);
+                startActivity(intent);
                 break;
         }
     }
 
-    /**
-     * 动态更多选项的点击事件
-     */
-    private class MyOnMoreOptionClickListener implements OnMoreOptionClickListener {
-        @Override
-        public void onclick(int position, View view) {
-            new XPopup.Builder(getContext())
-                    .offsetX(-10) //往左偏移10
-//                        .offsetY(10)  //往下偏移10
-//                        .popupPosition(PopupPosition.Right) //手动指定位置，有可能被遮盖
-                    .hasShadowBg(false) // 去掉半透明背景
-                    .atView(view)
-                    .asCustom(new MyAttachPopupView(getContext()))
-                    .show();
-        }
+    //弹出选择图片对话框
+    private void showSelectPictureBox() {
+        new XPopup.Builder(getContext())
+//                        .maxWidth(600)
+                .asCenterList("", new String[]{"拍照", "从相册选择"},
+                        new OnSelectListener() {
+                            @Override
+                            public void onSelect(int position, String text) {
+                                switch (position) {
+                                    case 0:         //拍照
+                                        mTakePhoto.onPickFromCaptureWithCrop(mUri, mCropOptions);
+
+                                        break;
+                                    case 1:         //相册
+                                        //mTakePhoto.onPickFromGalleryWithCrop(mUri, mCropOptions);
+                                        mTakePhoto.onPickMultiple(9);
+                                        //testMatisse();
+                                        break;
+                                }
+                            }
+                        })
+                .show();
     }
+
 }

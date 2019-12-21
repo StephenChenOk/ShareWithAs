@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chen.fy.sharewithas.beans.BaseShareInfoResponse;
 import com.chen.fy.sharewithas.beans.ShareInfo;
@@ -127,7 +131,25 @@ public class GetShareInfoTask extends AsyncTask<Void, Integer, String> {
         }
         //时间
         shareInfo.setShareDate(shareInfo_base.getShareDate());
-        Log.d("chenchenchen", shareInfo.toString());
+        //点赞
+        setDoLike(shareInfo, shareInfo_base.getLikes());
+
+        Log.d("shareInfo.Log", shareInfo.toString());
         shareInfos.add(shareInfo);
+    }
+
+    private void setDoLike(ShareInfo shareInfo, String likes) {
+        Log.d("setDoLike", likes);
+        if (likes.length() == 1 && likes.charAt(0) == ',') {
+            likes = "";
+        }
+        if (!likes.isEmpty() && likes.charAt(0) == ',') {
+            likes = likes.substring(1, likes.length() - 1);
+        }
+        if (!likes.isEmpty() && likes.charAt(likes.length() - 1) == ',') {
+            likes = likes.substring(0, likes.length() - 2);
+        }
+        //添加点赞
+        shareInfo.setLikes(likes);
     }
 }

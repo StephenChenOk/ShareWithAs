@@ -4,48 +4,34 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.WindowManager;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.chen.fy.sharewithas.R;
-import com.chen.fy.sharewithas.constants.Constants;
 import com.chen.fy.sharewithas.fragments.FoundFragment;
 import com.chen.fy.sharewithas.utils.UiUtils;
 import com.chen.fy.sharewithas.vassonic.SonicJavaScriptInterface;
 import com.chen.fy.sharewithas.vassonic.SonicRuntimeImpl;
 import com.chen.fy.sharewithas.vassonic.SonicSessionClientImpl;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tencent.sonic.sdk.SonicCacheInterceptor;
 import com.tencent.sonic.sdk.SonicConfig;
 import com.tencent.sonic.sdk.SonicConstants;
-import com.tencent.sonic.sdk.SonicDiffDataCallback;
 import com.tencent.sonic.sdk.SonicEngine;
-import com.tencent.sonic.sdk.SonicRuntime;
 import com.tencent.sonic.sdk.SonicSession;
-import com.tencent.sonic.sdk.SonicSessionClient;
 import com.tencent.sonic.sdk.SonicSessionConfig;
 import com.tencent.sonic.sdk.SonicSessionConnection;
 import com.tencent.sonic.sdk.SonicSessionConnectionInterceptor;
 
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;

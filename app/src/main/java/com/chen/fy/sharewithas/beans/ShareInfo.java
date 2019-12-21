@@ -14,6 +14,7 @@ public class ShareInfo {
     private String content;
     private ArrayList<Object> photos;
     private String shareDate;
+    private String likes;
 
     public int getId() {
         return id;
@@ -71,6 +72,14 @@ public class ShareInfo {
         this.shareDate = shareDate;
     }
 
+    public String getLikes() {
+        return likes;
+    }
+
+    public void setLikes(String likes) {
+        this.likes = likes;
+    }
+
     @Override
     public String toString() {
         return "ShareInfo{" +
@@ -81,6 +90,7 @@ public class ShareInfo {
                 ", content='" + content + '\'' +
                 ", photos=" + photos +
                 ", shareDate='" + shareDate + '\'' +
+                ", likes='" + likes + '\'' +
                 '}';
     }
 }

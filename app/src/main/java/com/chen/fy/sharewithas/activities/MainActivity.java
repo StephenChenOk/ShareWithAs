@@ -3,16 +3,13 @@ package com.chen.fy.sharewithas.activities;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,7 +21,6 @@ import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.fragments.FoundFragment;
 import com.chen.fy.sharewithas.fragments.HomeFragment;
 import com.chen.fy.sharewithas.fragments.MineFragment;
-import com.zhihu.matisse.Matisse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             homeFragment = new HomeFragment();
             transaction.add(R.id.fragment_main, homeFragment);
         }
-        hideFragment(transaction);
+        //hideFragment(transaction);
         transaction.show(homeFragment).commit();
 
         radioGroup.setOnCheckedChangeListener(this);

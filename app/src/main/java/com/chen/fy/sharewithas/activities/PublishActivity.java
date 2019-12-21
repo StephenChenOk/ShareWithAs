@@ -66,6 +66,8 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
     private CropOptions mCropOptions;
     private Uri mUri;
 
+    private boolean isPublish = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,8 +173,13 @@ public class PublishActivity extends TakePhotoActivity implements View.OnClickLi
                 finish();
                 break;
             case R.id.btn_publish:
-                String content = etContent.getText().toString();
-                postShareInfo(content);
+                if(!isPublish) {
+                    String content = etContent.getText().toString();
+                    postShareInfo(content);
+                    isPublish = true;
+                }else{
+                    Toast.makeText(this,"请勿重复点击",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.ll_location_publish_box:
                 toast("所在位置");
