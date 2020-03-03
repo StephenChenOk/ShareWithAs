@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.view.View;
 
-import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.model.ShareInfo;
 import com.chen.fy.sharewithas.views.MyAttachPopupView;
 import com.lxj.xpopup.XPopup;
 

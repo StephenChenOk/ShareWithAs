@@ -3,27 +3,21 @@ package com.chen.fy.sharewithas.asynctasks;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.applications.ContextApplication;
-import com.chen.fy.sharewithas.beans.BasePublishResponse;
-import com.chen.fy.sharewithas.beans.BaseShareInfoResponse;
-import com.chen.fy.sharewithas.beans.ShareInfo;
-import com.chen.fy.sharewithas.beans.User;
+import com.chen.fy.sharewithas.model.BasePublishResponse;
+import com.chen.fy.sharewithas.model.User;
 import com.chen.fy.sharewithas.constants.Constants;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;

@@ -4,11 +4,10 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.chen.fy.sharewithas.R;
-import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.model.ShareInfo;
 import com.chen.fy.sharewithas.constants.Constants;
 import com.chen.fy.sharewithas.fragments.HomeFragment;
 import com.google.gson.JsonObject;

@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +22,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.MainActivity;
-import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.model.ShareInfo;
 import com.chen.fy.sharewithas.interfaces.OnMoreOptionClickListener;
 import com.chen.fy.sharewithas.interfaces.OnPicturesItemClickListener;
 import com.chen.fy.sharewithas.interfaces.OnUserDetailsClickListener;

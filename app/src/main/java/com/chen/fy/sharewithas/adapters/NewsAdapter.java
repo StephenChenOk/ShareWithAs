@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
-import com.chen.fy.sharewithas.beans.News;
+import com.chen.fy.sharewithas.model.News;
 import com.chen.fy.sharewithas.interfaces.OnNewsItemClickListener;
 
 import java.util.List;

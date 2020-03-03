@@ -1,4 +1,4 @@
-package com.chen.fy.sharewithas.beans;
+package com.chen.fy.sharewithas.model;
 
 public class BasePublishResponse {
 

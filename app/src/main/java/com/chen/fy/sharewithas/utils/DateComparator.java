@@ -1,8 +1,6 @@
 package com.chen.fy.sharewithas.utils;
 
-import android.util.Log;
-
-import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.model.ShareInfo;
 
 import java.util.Comparator;
 

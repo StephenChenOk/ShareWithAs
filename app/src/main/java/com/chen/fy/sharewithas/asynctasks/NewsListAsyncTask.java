@@ -4,9 +4,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.chen.fy.sharewithas.adapters.NewsAdapter;
-import com.chen.fy.sharewithas.beans.BaseNewsResponse;
-import com.chen.fy.sharewithas.beans.News;
-import com.chen.fy.sharewithas.beans.NewsRequest;
+import com.chen.fy.sharewithas.model.BaseNewsResponse;
+import com.chen.fy.sharewithas.model.News;
+import com.chen.fy.sharewithas.model.NewsRequest;
 import com.chen.fy.sharewithas.constants.Constants;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

@@ -33,7 +33,7 @@ import com.chen.fy.sharewithas.activities.SearchActivity;
 import com.chen.fy.sharewithas.adapters.MultipleStatesAdapter;
 import com.chen.fy.sharewithas.adapters.MyViewPagerAdapter;
 import com.chen.fy.sharewithas.asynctasks.GetShareInfoTask;
-import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.model.ShareInfo;
 
 import com.chen.fy.sharewithas.interfaces.MyOnMoreOptionClickListener;
 import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;

@@ -1,12 +1,9 @@
 package com.chen.fy.sharewithas.activities;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
@@ -22,7 +19,6 @@ import android.widget.Toast;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.adapters.PublishGridViewAdapter;
 import com.chen.fy.sharewithas.asynctasks.PostShareInfoTask;
-import com.chen.fy.sharewithas.beans.ShareInfo;
 import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;
 import com.chen.fy.sharewithas.utils.UiUtils;
 import com.lxj.xpopup.XPopup;
@@ -34,10 +30,7 @@ import org.devio.takephoto.app.TakePhoto;
 import org.devio.takephoto.app.TakePhotoActivity;
 import org.devio.takephoto.compress.CompressConfig;
 import org.devio.takephoto.model.CropOptions;
-import org.devio.takephoto.model.InvokeParam;
-import org.devio.takephoto.model.TContextWrap;
 import org.devio.takephoto.model.TResult;
-import org.devio.takephoto.permission.PermissionManager;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -4,13 +4,9 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.chen.fy.sharewithas.beans.BaseShareInfoResponse;
-import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.model.BaseShareInfoResponse;
+import com.chen.fy.sharewithas.model.ShareInfo;
 import com.chen.fy.sharewithas.constants.Constants;
 import com.chen.fy.sharewithas.fragments.HomeFragment;
 import com.google.gson.Gson;

@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import com.bumptech.glide.Glide;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.asynctasks.DoLikeTask;
-import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.model.ShareInfo;
 import com.chen.fy.sharewithas.fragments.HomeFragment;
 import com.lxj.xpopup.core.HorizontalAttachPopupView;
 

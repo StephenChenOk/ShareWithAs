@@ -22,7 +22,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.LoginActivity;
 import com.chen.fy.sharewithas.activities.MyInfoActivity;
-import com.chen.fy.sharewithas.constants.Constants;
 import com.chen.fy.sharewithas.utils.UiUtils;
 
 import java.io.File;

@@ -3,7 +3,6 @@ package com.chen.fy.sharewithas.activities;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,9 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.adapters.SearchAdapter;
-import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.model.ShareInfo;
 import com.chen.fy.sharewithas.fragments.HomeFragment;
-import com.chen.fy.sharewithas.interfaces.MyOnMoreOptionClickListener;
 import com.chen.fy.sharewithas.interfaces.MyOnPicturesItemClickListener;
 import com.chen.fy.sharewithas.interfaces.OnUserDetailsClickListener;
 

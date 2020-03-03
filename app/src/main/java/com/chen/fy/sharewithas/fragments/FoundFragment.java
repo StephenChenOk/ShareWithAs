@@ -18,7 +18,7 @@ import com.chen.fy.sharewithas.R;
 import com.chen.fy.sharewithas.activities.NewsDetailActivity;
 import com.chen.fy.sharewithas.adapters.NewsAdapter;
 import com.chen.fy.sharewithas.asynctasks.NewsListAsyncTask;
-import com.chen.fy.sharewithas.beans.News;
+import com.chen.fy.sharewithas.model.News;
 import com.chen.fy.sharewithas.constants.Constants;
 import com.chen.fy.sharewithas.interfaces.OnNewsItemClickListener;
 import com.chen.fy.sharewithas.utils.UiUtils;

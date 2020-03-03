@@ -2,7 +2,7 @@ package com.chen.fy.sharewithas.interfaces;
 
 import android.view.View;
 
-import com.chen.fy.sharewithas.beans.ShareInfo;
+import com.chen.fy.sharewithas.model.ShareInfo;
 
 /**
  * 动态中更多选项的点击事件
